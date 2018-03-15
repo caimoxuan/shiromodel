@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmx.shiroservice.mapper.SystemMenuMapper">
+
+    <resultMap id="menuMap" type="com.cmx.shiroapi.model.SystemMenu">
+        <result property="id" column="id" />
+        <result property="menuUrl" column="menu_url" />
+        <result property="menuIcon" column="menu_icon" />
+        <result property="menuCode" column="menu_code" />
+        <result property="menuName" column="menu_name" />
+        <result property="parentMenuCode" column="parent_menucode" />
+        <result property="sequence" column="sequence" />
+        <result property="menuType" column="menu_type" />
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id = "selectId">
+        id,
+        menu_url,
+        menu_icon,
+        menu_code,
+        menu_name,
+        parent_menucode,
+        sequence,
+        menu_type,
+        create_time
+    </sql>
+
+    <sql id = "tb">
+        t_sys_menu
+    </sql>
+
+    <select id = "query" resultMap = "menuMap" parameterType = "map">
+        select <include refid = "selectId" />
+        from <include refid = "tb" />
+        <where>
+            <if test = "menuCode != null">
+                and menu_code = #{menuCode}
+            </if>
+            <if test = "parentMenuCode != null">
+                and parent_menucode = #{parentMenuCode}
+            </if>
+            <if test = "sequence != null">
+                and sequence = #{sequence}
+            </if>
+            <if test = "menuType != null">
+                and menu_type = #{menuType}
+            </if>
+        </where>
+        order by sequence asc
+        limit #{startPage}, #{endPage}
+    </select>
+
+    <select id="countByFilter" resultType="Long" parameterType="map">
+        select count(1)
+        from <include refid="tb"/>
+        <where>
+            <if test = "menuCode != null">
+                and menu_code = #{menuCode}
+            </if>
+            <if test = "parentMenuCode != null">
+                and parent_menucode = #{parentMenuCode}
+            </if>
+            <if test = "sequence != null">
+                and sequence = #{sequence}
+            </if>
+            <if test = "menuType != null">
+                and menu_type = #{menuType}
+            </if>
+        </where>
+    </select>
+
+    <insert id = "add" keyProperty = "id" parameterType = "systemMenu" useGeneratedKeys = "true">
+        insert into <include refid = "tb" />
+        (
+        id,
+        menu_url,
+        menu_icon,
+        menu_code,
+        menu_name,
+        parent_menucode,
+        sequence,
+        menu_type)
+        values(
+        #{id},
+        #{menuUrl},
+        #{menuIcon},
+        #{menuCode},
+        #{menuName},
+        #{parentMenuCode},
+        #{sequence},
+        #{menuType})
+    </insert>
+
+    <delete id = "delete" parameterType = "Integer">
+        delete from <include refid = "tb" /> where id = #{id}
+    </delete>
+
+    <update id = "modify" parameterType = "systemMenu">
+        update <include refid = "tb" />
+        <set>
+            <if test = "menuUrl != null">
+                menu_url = #{menuUrl},
+            </if>
+            <if test = "menuIcon != null">
+                menu_icon = #{menuIcon},
+            </if>
+            <if test = "menuCode != null">
+                menu_code = #{menuCode},
+            </if>
+            <if test = "menuName != null">
+                menu_name = #{menuName},
+            </if>
+            <if test = "parentMenuCode != null">
+                parent_menucode = #{parentMenuCode},
+            </if>
+            <if test = "sequence != null">
+                sequence = #{sequence},
+            </if>
+            <if test = "menuType != null">
+                menu_type = #{menuType},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id = "getById" parameterType = "Integer" resultMap="menuMap">
+        select <include refid = "selectId" />
+        from <include refid = "tb" />
+        where
+        id = #{id}
+    </select>
+
+    <select id = "queryByRole" parameterType="java.util.HashMap" resultMap="menuMap">
+      select
+        sm.id,
+        sm.menu_url,
+        sm.menu_icon,
+        sm.menu_code,
+        sm.menu_name,
+        sm.parent_menucode,
+        sm.sequence,
+        sm.menu_type
+      from t_sys_role_menu srm join t_sys_menu sm on(srm.menu_code = sm.menu_code)
+      where role_id = #{roleId}
+        <if test = "sequence != null">
+            and sequence = #{sequence}
+        </if>
+        <if test = "menuType != null">
+            and menuType = #{menuType}
+        </if>
+        order by sequence asc
+    </select>
+
+
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmx.shiroservice.mapper.SystemUserMapper">
+    <sql id = "selectId">
+        id,
+        username,
+        password,
+        salt,
+        locked
+    </sql>
+
+    <sql id = "tb">
+        t_sys_user
+    </sql>
+
+    <select id = "query" resultType = "SystemUser" parameterType = "java.util.HashMap">
+        select <include refid = "selectId" />
+        from <include refid = "tb" />
+        <where>
+            <if test = "id != null">
+                and id = #{id}
+            </if>
+            <if test = "username != null">
+                and username = #{username}
+            </if>
+            <if test = "password != null">
+                and password = #{password}
+            </if>
+            <if test = "salt != null">
+                and salt = #{salt}
+            </if>
+            <if test = "locked != null">
+                and locked = #{locked}
+            </if>
+        </where>
+    </select>
+
+    <insert id = "add" keyProperty = "id" parameterType = "SystemUser" useGeneratedKeys = "true">
+        insert into <include refid = "tb" />
+        (
+        id,
+        username,
+        password,
+        salt,
+        locked)
+        values(
+        #{id},
+        #{username},
+        #{password},
+        #{salt},
+        #{locked})
+    </insert>
+
+    <delete id = "delete" parameterType = "Long">
+        delete from <include refid = "tb" /> where id = #{id}
+    </delete>
+
+    <update id = "modify" parameterType = "SystemUser">
+        update <include refid = "tb" />
+        <set>
+            <if test = "id != null">
+                id = #{id},
+            </if>
+            <if test = "username != null">
+                username = #{username},
+            </if>
+            <if test = "password != null">
+                password = #{password},
+            </if>
+            <if test = "salt != null">
+                salt = #{salt},
+            </if>
+            <if test = "locked != null">
+                locked = #{locked}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id = "getById" parameterType = "Long" resultType = "SystemUser">
+        select <include refid = "selectId" />
+        from <include refid = "tb" />
+        where
+        id = #{id}
+    </select>
+
+    <select id="getByName" parameterType = "String" resultType="SystemUser">
+        select <include refid = "selectId" />
+        from <include refid = "tb" />
+        where
+        username = #{username}
+    </select>
+
+    <delete id="deleteUserRole" parameterType="Long">
+        delete from t_sys_user_role
+        where user_id = #{userId}
+    </delete>
+
+    <insert id = "createUserRole" parameterType="map" >
+        insert into t_sys_user_role
+        (
+        user_id,
+        role_id
+        )values(
+        #{userId},
+        #{roleId}
+        )
+    </insert>
+
+</mapper>

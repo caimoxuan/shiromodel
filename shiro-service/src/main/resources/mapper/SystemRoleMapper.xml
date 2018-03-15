@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmx.shiroservice.mapper.SystemRoleMapper">
+
+    <resultMap id="roleMap" type="com.cmx.shiroapi.model.SystemRole">
+        <result property="roleId" column="role_id" />
+        <result property="roleCode" column="role_code" />
+        <result property="roleName" column="role_name" />
+        <result property="description" column="description" />
+    </resultMap>
+
+    <sql id = "selectId">
+        role_id,
+        role_code,
+        role_name,
+        description
+    </sql>
+
+    <sql id = "tb">
+        t_sys_role
+    </sql>
+
+    <select id = "query" resultMap = "roleMap" parameterType = "map">
+        select <include refid = "selectId" />
+        from <include refid = "tb" />
+        <where>
+            <if test = "roleId != null">
+                and role_id = #{roleId}
+            </if>
+            <if test = "roleName != null">
+                and role_name = #{roleName}
+            </if>
+            <if test = "roleCode != null">
+                and role_code = #{roleCode}
+            </if>
+        </where>
+        limit #{startPage}, #{endPage}
+    </select>
+
+    <select id="countByFilter" resultType="Long" parameterType="map">
+        select count(1)
+        from <include refid="tb"/>
+        <where>
+            <if test = "roleId != null">
+                and role_id = #{roleId}
+            </if>
+            <if test = "roleName != null">
+                and role_name = #{roleName}
+            </if>
+            <if test = "roleCode != null">
+                and role_code = #{roleCode}
+            </if>
+        </where>
+    </select>
+
+    <insert id = "add" keyProperty = "roleId" parameterType = "systemRole" useGeneratedKeys = "true">
+        insert into <include refid = "tb" />
+        (role_id,
+        role_code,
+        role_name,
+        description)
+        values(
+        #{roleId},
+        #{roleCode},
+        #{roleName},
+        #{description})
+    </insert>
+
+    <delete id = "delete" parameterType = "Integer">
+        delete from <include refid = "tb" /> where role_id = #{roleId}
+    </delete>
+
+    <update id = "modify" parameterType = "systemRole">
+        update <include refid = "tb" />
+        <set>
+            <if test = "roleName != null">
+                role_name = #{roleName},
+            </if>
+            <if test = "roleCode != null">
+                role_code = #{roleCode},
+            </if>
+            <if test = "description != null">
+                description = #{description},
+            </if>
+        </set>
+        where role_id = #{roleId}
+    </update>
+
+    <select id = "getByRoleId" parameterType = "Integer" resultMap="roleMap">
+        select <include refid = "selectId" />
+        from <include refid = "tb" />
+        where
+        role_id = #{role_id}
+    </select>
+
+    <select id = "getRoleByUserId" parameterType="Long" resultMap="roleMap">
+      select
+        sr.role_id,
+        sr.role_code,
+        sr.role_name,
+        sr.description
+      from t_sys_user_role sru join t_sys_role sr on(sru.role_id = sr.role_id)
+      where user_id = #{userId}
+    </select>
+
+    <delete id="deleteRoleMenu" parameterType="Integer">
+        delete from
+        t_sys_role_menu
+        where role_id = #{roleId}
+    </delete>
+
+    <insert id="createRoleMenu" parameterType="map">
+        insert into
+        t_sys_role_menu
+        (menu_code,
+        role_id)values(
+        #{menuCode},
+        #{roleId}
+        )
+    </insert>
+
+</mapper>
