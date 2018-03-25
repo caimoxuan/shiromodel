@@ -25,7 +25,6 @@ public class SystemUserServiceImpl implements SystemUserService {
 
     @Autowired
     private UserPasswordUtil passwordUtil;
-
     @Autowired
     private SystemUserMapper systemUserMapper;
     @Autowired

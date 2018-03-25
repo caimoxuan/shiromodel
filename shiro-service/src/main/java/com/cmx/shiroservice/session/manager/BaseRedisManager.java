@@ -1,6 +1,8 @@
 package com.cmx.shiroservice.session.manager;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 import redis.clients.util.Pool;
@@ -10,9 +12,9 @@ import java.util.Set;
 
 public abstract class BaseRedisManager implements IRedisManager {
 
-    protected volatile Pool<Jedis> jedisPool = null;
+    @Autowired
+    protected volatile JedisPool jedisPool;
 
-    protected abstract void checkAndInit();
 
     // expire time in seconds
     protected static final int DEFAULT_EXPIRE = 3600;
@@ -29,7 +31,6 @@ public abstract class BaseRedisManager implements IRedisManager {
      */
     @Override
     public byte[] get(byte[] key){
-        checkAndInit();
         if (key == null) {
             return null;
         }
@@ -51,7 +52,6 @@ public abstract class BaseRedisManager implements IRedisManager {
      */
     @Override
     public byte[] set(byte[] key,byte[] value){
-        checkAndInit();
         if (key == null) {
             return null;
         }
@@ -76,7 +76,6 @@ public abstract class BaseRedisManager implements IRedisManager {
      */
     @Override
     public byte[] set(byte[] key,byte[] value,int expire){
-        checkAndInit();
         if (key == null) {
             return null;
         }
@@ -98,7 +97,6 @@ public abstract class BaseRedisManager implements IRedisManager {
      */
     @Override
     public void del(byte[] key){
-        checkAndInit();
         if (key == null) {
             return;
         }
@@ -115,7 +113,6 @@ public abstract class BaseRedisManager implements IRedisManager {
      */
     @Override
     public Long dbSize(){
-        checkAndInit();
         Long dbSize;
         Jedis jedis = jedisPool.getResource();
         try{
