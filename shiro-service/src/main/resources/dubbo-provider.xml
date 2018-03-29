@@ -18,15 +18,11 @@
     <dubbo:provider delay="-1" timeout="5000" retries="1"/>
 
     <dubbo:consumer timeout="60000" check="false" />
-    <!-- 声明需要暴露的服务接口 -->
-    <!--<dubbo:service interface="com.dtdream.pubtrans.backend.service.ITrafficService" ref="trafficService"/>-->
 
     <!-- 扫描注解包路径，多个包用逗号分隔，不填pacakge表示扫描当前ApplicationContext中所有的类 -->
-    <!--<dubbo:annotation package="com.dtdream.pubtrans.backend.provider" />-->
     <dubbo:annotation package="com.cmx.shiroservice" />
 
-    <dubbo:reference id="systemUserService" interface="com.cmx.shiroapi.service.SystemUserService" retries="0" timeout="30000" check="false" version = "1.0.0" />
-    <dubbo:reference id="systemRoleService" interface="com.cmx.shiroapi.service.SystemRoleService" retries="0" timeout="30000" check="false" version="1.0.0" />
-    <dubbo:reference id="systemMenuService" interface="com.cmx.shiroapi.service.SystemMenuService" retries="0" timeout="30000" check="false" version="1.0.0" />
-    <dubbo:reference id="permissionService" interface="com.cmx.shiroapi.service.PermissionService" retries="0" timeout="30000" check="false" version="1.0.0" />
+    <dubbo:service ref="systemUserServiceImpl" interface="com.cmx.shiroapi.service.SystemUserService" retries="0" timeout="30000" version = "1.0.0" />
+    <dubbo:service ref="systemRoleServiceImpl" interface="com.cmx.shiroapi.service.SystemRoleService" retries="0" timeout="30000"  version="1.0.0" />
+    <dubbo:service ref="systemMenuServiceImpl" interface="com.cmx.shiroapi.service.SystemMenuService" retries="0" timeout="30000" version="1.0.0" />
 </beans>
