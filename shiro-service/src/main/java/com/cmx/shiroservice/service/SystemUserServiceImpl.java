@@ -4,6 +4,7 @@ package com.cmx.shiroservice.service;
 import com.cmx.shiroapi.commons.ResultData;
 import com.cmx.shiroapi.enums.SystemMessageEnum;
 import com.cmx.shiroapi.model.SystemUser;
+import com.cmx.shiroapi.model.params.LoginSuccessInfo;
 import com.cmx.shiroapi.service.SystemUserService;
 import com.cmx.shiroservice.manager.UserManager;
 import com.cmx.shiroservice.mapper.SystemUserMapper;
@@ -11,11 +12,9 @@ import com.cmx.shiroservice.util.UserPasswordUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
+import javax.security.auth.Subject;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -72,5 +71,11 @@ public class SystemUserServiceImpl implements SystemUserService {
         return ResultData.newSingleSuccess(userName);
     }
 
+
+    @Override
+    public LoginSuccessInfo loginSuccess(){
+        LoginSuccessInfo loginSuccess = userManager.getLoginSuccess();
+        return loginSuccess;
+    }
 
 }

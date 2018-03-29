@@ -1,7 +1,6 @@
 package com.cmx.shiroservice.config;
 
 
-import com.cmx.shiroservice.filter.AxiosFormAuthenticationFilter;
 import com.cmx.shiroservice.filter.ShiroAxiosFilter;
 import com.cmx.shiroservice.matcher.UserCredentialsMatcher;
 import com.cmx.shiroservice.realm.SimpleUserRealm;
@@ -10,10 +9,8 @@ import com.cmx.shiroservice.session.dao.RedisSessionDao;
 import com.cmx.shiroservice.session.manager.RedisManager;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -29,9 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -61,15 +56,9 @@ public class ShiroConfig {
 
         //拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        //匹配所有请求 authc 需要验证， anon 不需要验证
+        //匹配所有请求 authc 需要验证， anon 不需要验证 这里的权限可以使用动态添加的方式
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/logout", "anon");
-        //登出shiro已经实现
-        //filterChainDefinitionMap.put("/logout", "logout");
-//        filterChainDefinitionMap.put("/menu-manager", "anon");
-//        filterChainDefinitionMap.put("/menu-manager/**", "anon");
-//        filterChainDefinitionMap.put("/menu", "anon");
-//        filterChainDefinitionMap.put("/role-manager/**", "anon");
         //其他所有的路径访问 要么的登入才能访问， 要么使用remember登入访问
         filterChainDefinitionMap.put("/**", "axios,authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);

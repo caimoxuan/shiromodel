@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * 当使用动态管理权限的时候， 权限改变的时候需要更新shiro权限拦截
+ */
 @Service
 public class DynamicShiroService {
 

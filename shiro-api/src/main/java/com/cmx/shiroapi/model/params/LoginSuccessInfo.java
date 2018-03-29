@@ -10,8 +10,8 @@ public class LoginSuccessInfo {
 
     private String redirectUrl;
     private String userName;
-    private String avatorUrl;
+    private String avatarUrl;
     private Long authFailTime;
-    private List<MainMenu> systemMenu;
+    private List<MainMenu> menuList;
 
 }

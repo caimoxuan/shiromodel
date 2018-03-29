@@ -5,16 +5,15 @@ import com.cmx.shiroapi.model.SystemRole;
 import com.cmx.shiroapi.model.SystemUser;
 import com.cmx.shiroapi.model.dto.MainMenu;
 import com.cmx.shiroapi.model.params.LoginSuccessInfo;
-import com.cmx.shiroapi.service.SystemMenuService;
 import com.cmx.shiroservice.comparator.SystemRoleComparator;
 import com.cmx.shiroservice.mapper.SystemRoleMapper;
 import com.cmx.shiroservice.mapper.SystemUserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,9 +38,10 @@ public class UserManager {
     @Autowired
     private SystemRoleMapper systemRoleMapper;
     @Autowired
-    private SystemMenuService systemMenuService;
+    private MenuManager menuManager;
 
-    public LoginSuccessInfo getLoginSuccess(Subject subject){
+    public LoginSuccessInfo getLoginSuccess(){
+        Subject subject = SecurityUtils.getSubject();
         LoginSuccessInfo loginSuccessInfo = new LoginSuccessInfo();
         if(subject.isAuthenticated()) {
             loginSuccessInfo.setRedirectUrl(successUtl);
@@ -51,8 +51,8 @@ public class UserManager {
         Session session = subject.getSession();
         loginSuccessInfo.setUserName(((SystemUser)subject.getPrincipal()).getUsername());
         loginSuccessInfo.setAuthFailTime(session.getLastAccessTime().getTime());
-        loginSuccessInfo.setAvatorUrl("https://upload.jianshu.io/users/upload_avatars/4361488/a7779618-da21-4d88-ab6e-4684c7cb327e.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/240/h/240");
-        loginSuccessInfo.setSystemMenu(getUserMenu(subject));
+        loginSuccessInfo.setAvatarUrl("https://upload.jianshu.io/users/upload_avatars/4361488/a7779618-da21-4d88-ab6e-4684c7cb327e.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/240/h/240");
+        loginSuccessInfo.setMenuList(getUserMenu(subject));
         return loginSuccessInfo;
     }
 
@@ -71,7 +71,7 @@ public class UserManager {
         }else{
             queryRoleMenuMap.put("roleId", 5);
         }
-        return systemMenuService.distributeMenu(queryRoleMenuMap);
+        return menuManager.distributeMenu(queryRoleMenuMap);
     }
 
 
@@ -89,7 +89,7 @@ public class UserManager {
         systemUserMapper.deleteUserRole(userId);
         //添加相应的角色
         for(Integer roleId : roleIds){
-            Map<String, Object> params = new HashMap<>();
+            Map<String, Object> params = new HashMap<>(2);
             params.put("userId", userId);
             params.put("roleId", roleId);
             systemUserMapper.createUserRole(params);

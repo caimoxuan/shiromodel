@@ -2,7 +2,6 @@ package com.cmx.shiroservice.controller;
 
 
 import com.cmx.shiroapi.commons.ResultData;
-import com.cmx.shiroapi.enums.SystemMessageEnum;
 import com.cmx.shiroapi.model.SystemMenu;
 import com.cmx.shiroapi.model.SystemRole;
 import com.cmx.shiroapi.model.dto.MenuParamQueryDTO;
@@ -26,21 +25,21 @@ import java.util.Map;
 public class SystemManagerController {
 
     @Autowired
-    private SystemMenuService menuService;
+    private SystemMenuService systemMenuService;
     @Autowired
     private SystemRoleService systemRoleService;
 
     @RequestMapping(value = "/menu-manager", method = RequestMethod.POST)
     public ResultData queryMenu(MenuParamQueryDTO menuParamQueryDTO){
         log.info("queryMenu get params : {}", menuParamQueryDTO);
-        return menuService.queryMenu(menuParamQueryDTO);
+        return systemMenuService.queryMenu(menuParamQueryDTO);
     }
 
     @RequestMapping(value = "/menu-manager/addMenu", method = RequestMethod.POST)
     public ResultData addMenu(SystemMenu systemMenu){
         log.info("addMenu get params : {}", systemMenu);
         try {
-            menuService.addMenu(systemMenu);
+            systemMenuService.addMenu(systemMenu);
         }catch(Exception e){
             log.info("addMenu fail case : {}", e);
         }
@@ -52,7 +51,7 @@ public class SystemManagerController {
     public ResultData modifyMenu(SystemMenu systemMenu){
         log.info("modifyMenu get params : {}", systemMenu);
         try {
-            menuService.modifyMenu(systemMenu);
+            systemMenuService.modifyMenu(systemMenu);
         }catch(Exception e){
             log.info("modifyMenu fail case : {}", e);
         }
@@ -66,7 +65,7 @@ public class SystemManagerController {
         log.info("deleteMenu get params : {}", ids.length);
         try {
             for(Integer id : ids) {
-                menuService.deleteMenu(id);
+                systemMenuService.deleteMenu(id);
             }
         }catch(Exception e){
             log.info("deleteMenu fail case : {}", e);
@@ -131,7 +130,7 @@ public class SystemManagerController {
         log.info("queryRoleMenu get params : {}", roleId);
         Map<String, Object> params = new HashMap<>();
         params.put("roleId", roleId);
-        List<SystemMenu> rolesMenu = menuService.getMenuByRole(params);
+        List<SystemMenu> rolesMenu = systemMenuService.getMenuByRole(params);
         return ResultData.newSetSuccess(rolesMenu, rolesMenu.size());
     }
 

@@ -64,7 +64,7 @@ public class SystemRoleServiceImpl implements SystemRoleService{
     }
 
     private Map<String, Object> getParams(RoleParamQueryDTO roleParamQueryDTO){
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(4);
         params.put("roleName", roleParamQueryDTO.getRoleName());
         params.put("roleId", roleParamQueryDTO.getRoleId());
         params.put("startPage", (roleParamQueryDTO.getStartPage()-1)*roleParamQueryDTO.getPageSize());

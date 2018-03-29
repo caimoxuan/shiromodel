@@ -20,15 +20,10 @@ public class ShiroAxiosFilter extends AccessControlFilter {
 
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) {
-        log.info("start user filter from axios");
         HttpServletResponse httpServletResponse = (HttpServletResponse)response;
         Subject subject = SecurityUtils.getSubject();
         if(subject.isAuthenticated()){
-            if(subject.hasRole("admin")){
-                log.info("has role");
-            }else{
-                log.info("has no role");
-            }
+            //这里可以进行用户的角色、权限的认账
             return true;
         }else{
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());

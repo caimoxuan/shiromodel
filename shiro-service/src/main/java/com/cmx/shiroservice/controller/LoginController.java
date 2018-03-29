@@ -6,8 +6,7 @@ import com.cmx.shiroapi.enums.SystemMessageEnum;
 import com.cmx.shiroapi.model.dto.MainMenu;
 import com.cmx.shiroapi.model.params.LoginSuccessInfo;
 import com.cmx.shiroapi.service.SystemMenuService;
-import com.cmx.shiroservice.manager.UserManager;
-import com.cmx.shiroservice.service.DynamicShiroService;
+import com.cmx.shiroapi.service.SystemUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -32,7 +31,7 @@ public class LoginController {
 
 
     @Autowired
-    private UserManager userManager;
+    private SystemUserService systemUserService;
 
     @Autowired
     private SystemMenuService systemMenuService;
@@ -44,7 +43,6 @@ public class LoginController {
                             String rememberMe){
         log.info("login : userNmae : {} , password : {}", username, password);
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-        token.setRememberMe(true);
         Subject subject = SecurityUtils.getSubject();
         try{
             subject.login(token);
@@ -63,7 +61,7 @@ public class LoginController {
                 return ResultData.newFail(SystemMessageEnum.UNKNOWN_SYSTEM_ERROR.getCode(), SystemMessageEnum.UNKNOWN_SYSTEM_ERROR.getMsgCn());
             }
         }
-        LoginSuccessInfo loginSuccess = userManager.getLoginSuccess(subject);
+        LoginSuccessInfo loginSuccess = systemUserService.loginSuccess();
 
         return ResultData.newSingleSuccess(loginSuccess);
     }
@@ -76,6 +74,7 @@ public class LoginController {
         if(subject.isAuthenticated()){
             userName = subject.getPrincipal().toString();
             subject.logout();
+            //清楚该用户对应redies中的缓存
         }
         return ResultData.newSingleSuccess(userName);
     }
@@ -84,7 +83,7 @@ public class LoginController {
     @ResponseBody
     public ResultData getMenu(String roleId){
 
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(1);
         params.put("roleId", roleId);
         List<MainMenu> mainMenus = systemMenuService.distributeMenu(params);
         return ResultData.newSetSuccess(mainMenus, 0);
