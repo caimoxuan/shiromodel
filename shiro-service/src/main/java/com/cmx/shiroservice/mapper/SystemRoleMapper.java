@@ -3,6 +3,7 @@ package com.cmx.shiroservice.mapper;
 
 import com.cmx.shiroapi.model.SystemRole;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;

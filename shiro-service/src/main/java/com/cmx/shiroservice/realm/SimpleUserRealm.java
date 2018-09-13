@@ -65,7 +65,7 @@ public class SimpleUserRealm extends AuthorizingRealm{
         if(user.getLocked()){
             throw new LockedAccountException("锁定的账号");
         }
-
+        //param1： principal
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user,user.getPassword(), ByteSource.Util.bytes(user.getCredentialsSalt()),getName());
         return authenticationInfo;
     }

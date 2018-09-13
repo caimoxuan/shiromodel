@@ -17,6 +17,10 @@
                         <typeHandler handler="org.apache.ibatis.type.ZonedDateTimeTypeHandler" />
                         <typeHandler javaType="com.cmx.shiroapi.enums.MenuType" handler="com.cmx.shiroapi.enums.BaseEnumTypeHandler" />
                 </typeHandlers>
+                <plugins>
+                        <plugin interceptor="com.cmx.shiroservice.interceptor.MybatisInterceptor" />
+                        <plugin interceptor="com.cmx.shiroservice.interceptor.MybatisInterceptorSecond" />
+                </plugins>
                 <mappers>
                         <mapper resource="mapper/SystemUserMapper.xml" />
                         <mapper resource="mapper/SystemMenuMapper.xml" />

@@ -1,6 +1,6 @@
 package com.cmx.shiroapi.enums;
 
-public enum SystemMessageEnum {
+public enum SystemMessageEnum implements ErrorMessageEnum{
 
     //用户相关
     USER_NOT_EXIT(4001, "user not exit", "用户不存在"),
@@ -22,9 +22,13 @@ public enum SystemMessageEnum {
         this.msgEn = msgEn;
     }
 
+    @Override
     public int getCode() {
         return code;
     }
+
+    @Override
+    public String getMessage(){return msgCn; }
 
     public String getMsgEn() {
         return msgEn;

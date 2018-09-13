@@ -6,10 +6,15 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserCredentialsMatcher extends HashedCredentialsMatcher {
+
+
+    @Value("${shiro.maxpassword.retrytime}")
+    private Integer maxPasswordRetryTime;
 
 
     private Cache<String, AtomicInteger> passwordRetryCache;
@@ -31,7 +36,7 @@ public class UserCredentialsMatcher extends HashedCredentialsMatcher {
             passwordRetryCache.put(username, new AtomicInteger( retryCount.incrementAndGet()));
         }
 
-        if(retryCount.get() >= 5){
+        if(retryCount.get() >= maxPasswordRetryTime){
             throw new LockedAccountException("账户被锁定10分钟");
         }
 

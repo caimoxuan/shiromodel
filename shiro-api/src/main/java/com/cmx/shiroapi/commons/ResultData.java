@@ -1,5 +1,6 @@
 package com.cmx.shiroapi.commons;
 
+import com.cmx.shiroapi.enums.ErrorMessageEnum;
 import lombok.Data;
 import java.util.List;
 
@@ -33,6 +34,14 @@ public class ResultData<T> {
         ResultData resultSet = new ResultData();
         resultSet.setData(data);
         resultSet.setSuccess(true);
+        return resultSet;
+    }
+
+    public static ResultData newFail(ErrorMessageEnum eme){
+        ResultData resultSet = new ResultData();
+        resultSet.setCode(eme.getCode());
+        resultSet.setMessage(eme.getMessage());
+        resultSet.setSuccess(false);
         return resultSet;
     }
 

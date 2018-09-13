@@ -10,7 +10,7 @@
         <result property="menuName" column="menu_name" />
         <result property="parentMenuCode" column="parent_menucode" />
         <result property="sequence" column="sequence" />
-        <result property="menuType" column="menu_type" />
+        <result property="menuType" column="menu_type" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" />
     </resultMap>
 
