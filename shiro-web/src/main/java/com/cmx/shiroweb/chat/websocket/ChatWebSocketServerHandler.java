@@ -5,6 +5,8 @@ import com.cmx.shiroweb.chat.channel.ChannelManager;
 import com.cmx.shiroweb.chat.component.MessageDispatcher;
 import com.cmx.shiroweb.chat.component.facilities.ChatRoom;
 import com.cmx.shiroweb.chat.component.facilities.NormalRoom;
+import com.cmx.shiroweb.chat.component.facilities.RoomManager;
+import com.cmx.shiroweb.chat.constant.DefaultConstant;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -27,14 +29,16 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
     @Autowired
     private MessageDispatcher messageDispatcher;
 
-    private WebSocketServerHandshaker handshaker;
+    @Autowired
+    private RoomManager roomManager;
 
-    private ChatRoom chatHall;
+    private WebSocketServerHandshaker handshaker;
 
     @PostConstruct
     public void initChatHall(){
-        chatHall = new NormalRoom("01", "base");
+        ChatRoom chatHall = new NormalRoom(DefaultConstant.DEFAULT_HALL_ID, DefaultConstant.DFFAULT_HALL_NAME);
         chatHall.setRoomChannelGroup(GlobalChannel.group);
+        roomManager.registerRoom(chatHall);
     }
 
     /**
@@ -43,7 +47,7 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 添加
-        chatHall.getRoomChannelGroup().add(ctx.channel());
+        roomManager.getHall().getRoomChannelGroup().add(ctx.channel());
         System.out.println("客户端与服务端连接开启：" + ctx.channel().remoteAddress().toString());
     }
 
@@ -53,7 +57,7 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         // 移除
-        chatHall.getRoomChannelGroup().remove(ctx.channel());
+        roomManager.getHall().getRoomChannelGroup().remove(ctx.channel());
         //从各个房间删除用户
         System.out.println("客户端与服务端连接关闭：" + ctx.channel().remoteAddress().toString());
     }
@@ -101,7 +105,7 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
         ChannelManager.setChannel(ctx);
         //返回应答消息
         String request = ((TextWebSocketFrame) frame).text();
-        messageDispatcher.dispatchMessage(request, chatHall);
+        messageDispatcher.dispatchMessage(request);
 
        //完成一次通话清除当前保存的用户
         ChannelManager.remove();

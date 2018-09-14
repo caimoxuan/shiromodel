@@ -1,5 +1,6 @@
 package com.cmx.shiroweb.chat.component.message;
 
+import com.cmx.shiroweb.chat.constant.DefaultConstant;
 import lombok.Data;
 
 @Data
@@ -11,11 +12,11 @@ public class Message {
 
     protected Long timeStamp;
 
-    protected Long sendUserId;
+    protected Long sendUser;
 
-    protected Long receiveUserId;
+    protected Long receiveUser;
 
-    protected String roomId = "01";
+    protected String roomId = DefaultConstant.DEFAULT_HALL_ID;
 
     protected String messageType;
 

@@ -44,7 +44,7 @@ public class MessageDispatcher implements ApplicationContextAware{
         }
     }
 
-    public void dispatchMessage(String jsonMessage, ChatRoom room){
+    public void dispatchMessage(String jsonMessage){
         Message message = JSONObject.parseObject(jsonMessage, Message.class);
         saveMessage(message);
         for(MessageListener listener : messageListeners){
