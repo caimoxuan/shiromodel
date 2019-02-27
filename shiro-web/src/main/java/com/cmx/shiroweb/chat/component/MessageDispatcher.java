@@ -39,9 +39,7 @@ public class MessageDispatcher implements ApplicationContextAware{
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         log.info("start init message listener!");
         Map<String, MessageListener> beanMap = applicationContext.getBeansOfType(MessageListener.class);
-        for(MessageListener listener : beanMap.values()){
-            messageListeners.add(listener);
-        }
+        messageListeners.addAll(beanMap.values());
     }
 
     public void dispatchMessage(String jsonMessage){

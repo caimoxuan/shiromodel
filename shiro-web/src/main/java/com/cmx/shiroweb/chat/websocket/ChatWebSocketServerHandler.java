@@ -1,24 +1,33 @@
 package com.cmx.shiroweb.chat.websocket;
 
-import com.cmx.shiroweb.chat.channel.GlobalChannel;
 import com.cmx.shiroweb.chat.channel.ChannelManager;
+import com.cmx.shiroweb.chat.channel.GlobalChannel;
 import com.cmx.shiroweb.chat.component.MessageDispatcher;
 import com.cmx.shiroweb.chat.component.facilities.ChatRoom;
 import com.cmx.shiroweb.chat.component.facilities.NormalRoom;
 import com.cmx.shiroweb.chat.component.facilities.RoomManager;
 import com.cmx.shiroweb.chat.constant.DefaultConstant;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
-import io.netty.handler.codec.http.*;
+import com.cmx.shiroweb.chat.proto.ChatMessageOuterClass;
+import io.netty.buffer.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
-import io.netty.channel.ChannelHandler.Sharable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.Instant;
 
 
 @Slf4j
@@ -33,6 +42,8 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
     private RoomManager roomManager;
 
     private WebSocketServerHandshaker handshaker;
+
+    private ByteBuf bytes = Unpooled.buffer();
 
     @PostConstruct
     public void initChatHall(){
@@ -79,25 +90,76 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
             handleHttpRequest(ctx, ((FullHttpRequest) msg));
             // WebSocket接入
         } else if (msg instanceof WebSocketFrame) {
+            log.info("handler webSocket message!");
             handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
         }
     }
 
-
-    private void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
+    private void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // 判断是否关闭链路的指令
         if (frame instanceof CloseWebSocketFrame) {
+            log.info("get close webSocket message;");
             handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
         }
         // 判断是否ping消息
         if (frame instanceof PingWebSocketFrame) {
+            log.info("get ping webSocket message");
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
+
+        //大数据流消息
+        if(frame instanceof ContinuationWebSocketFrame){
+            System.out.println("get continuation webSocket message");
+            ContinuationWebSocketFrame continuationWebSocketFrame = ((ContinuationWebSocketFrame)frame);
+            ByteBuf byteBuf = continuationWebSocketFrame.retain().content();
+            if(continuationWebSocketFrame.isFinalFragment()) {
+                bytes.writeBytes(byteBuf);
+                System.out.println("finish : " + bytes.readableBytes());
+                final int length = bytes.readableBytes();
+                final byte[] array = new byte[length];
+                bytes.getBytes(bytes.readerIndex(), array, 0, length);
+                ChatMessageOuterClass.ChatMessage chatMessage = ChatMessageOuterClass.ChatMessage.parseFrom(array);
+                System.out.println(chatMessage.getMessageId() + " , " + chatMessage.getMessageContext());
+                File f = new File(chatMessage.getFileMessage().getFileName());
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(chatMessage.getFileMessage().getFileContent().toByteArray());
+                fos.close();
+                bytes.clear();
+            }else{
+                bytes.writeBytes(byteBuf);
+                System.out.println(bytes.readableBytes());
+            }
+
+
+            //ctx.channel().writeAndFlush(frame.retain());
+            return;
+        }
+
+
+        //二进制消息
+        if (frame instanceof BinaryWebSocketFrame) {
+            log.info("get binary webSocket message");
+
+            if(frame.isFinalFragment()){
+                ByteBuf content =  frame.content();
+                final int length = content.readableBytes();
+                final byte[] array = new byte[length];
+                content.getBytes(content.readerIndex(), array, 0, length);
+                ChatMessageOuterClass.ChatMessage chatMessage = ChatMessageOuterClass.ChatMessage.parseFrom(array);
+                System.out.println(chatMessage.getMessageId() + ":" + chatMessage.getMessageContext() + ":" + chatMessage.getFileMessage());
+                ctx.channel().writeAndFlush(frame.retain());
+            }else{
+                bytes.writeBytes(frame.content());
+                System.out.println(bytes.readableBytes());
+            }
+            return ;
+        }
+
         // 本例程仅支持文本消息，不支持二进制消息
         if (!(frame instanceof TextWebSocketFrame)) {
-           log.info("只对文本消息进行处理，二进制消息报错， 报错就会将当前用户流关闭");
+           log.info("get unSupport frame : {}", frame.getClass());
             throw new UnsupportedOperationException(
                     String.format("%s frame types not supported", frame.getClass().getName()));
         }

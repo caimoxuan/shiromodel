@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="protobuf.js"></script>
+    <title>websocket</title>
+
+    <script type="text/javascript">
+        var WSMessage;
+        var wsmessage;
+        var buffer;
+        function WebSocketTest()
+        {
+            if ("WebSocket" in window)
+            {
+                alert("您的浏览器支持 WebSocket!");
+
+                // 打开一个 web socket
+                var ws = new WebSocket("ws://localhost:7397");
+
+                ws.onopen = function()
+                {
+                    // Web Socket 已连接上，使用 send() 方法发送数据
+                    //ws.send("发送数据");
+                    //alert("数据发送中...");
+                    //sendFile(ws);
+
+                    protobuf.load("ChatMessage.proto", function(err, root){
+                        if(err) {console.log(err);}
+                        console.log(root);
+                        let files = document.getElementById("file").files;
+                        let reader = new FileReader();
+                        reader.readAsArrayBuffer(files[0]);
+                        //reader.readAsBinaryString(files[0])
+                        reader.onload = function load(evt){
+                            console.log("start read file", evt.target);
+                            let blob = evt.target.result;
+                            WSMessage = root.lookupType("com.cmx.shiroweb.chat.proto.ChatMessage");
+                            wsmessage = WSMessage.create({messageId:123123,messageContext:"测试",fileMessage:{fileName:"test",fileContent:new Uint8Array(blob)}});
+                            buffer = WSMessage.encode(wsmessage).finish();
+                            ws.send(buffer);
+                        }
+                    })
+
+                };
+
+                ws.onmessage = function (evt)
+                {
+                    console.log("webSocket on message : {}", evt);
+                    if(typeof(evt.data)==="string"){
+                        console.log(evt.data);
+                    }else{
+                        console.log("get binary!");
+                        var reader = new FileReader();
+                        reader.onload=function(eve){
+                            if(eve.target.readyState==FileReader.DONE)
+                            {
+                                //var img = document.createElement("img");
+                                //img.src=eve.target.result;
+                                //document.getElementById("plane").appendChild(img);
+                                var buf = new Uint8Array(eve.target.result);
+                                console.log(WSMessage.decode(buf));
+                                let readerImg = new FileReader();
+                                let uni8Array = WSMessage.decode(buf).fileMessage.fileContent;
+                                readerImg.readAsDataURL(new Blob([uni8Array]));
+                                readerImg.onload = function(res) {
+                                    var img = document.createElement("img");
+                                    img.src=res.target.result;
+                                    document.getElementById("plane").appendChild(img);
+                                }
+                            }
+                        };
+                        reader.readAsArrayBuffer(evt.data);
+                    }
+                };
+
+                ws.onclose = function()
+                {
+                    // 关闭 websocket
+                    alert("连接已关闭...");
+                };
+            }
+
+            else
+            {
+                // 浏览器不支持 WebSocket
+                alert("您的浏览器不支持 WebSocket!");
+            }
+        }
+
+        function sendFile(ws) {
+            let inputFile = document.getElementById("file");
+            let fileList = inputFile.files;
+            let file = fileList[0];
+            if(!file){return;}
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = function load(evt){
+                console.log("start read file", evt.target);
+                let blob = evt.target.result;
+                ws.send(blob);
+            }
+            inputFile.outerHTML = inputFile.outerHTML;
+        }
+
+        function getFileBuffer(file) {
+            if(!file){
+                return null;
+            }
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = function load(evt){
+                console.log("start read file", evt.target);
+                let blob = evt.target.result;
+                console.log("===",blob);
+                return blob;
+            }
+        }
+    </script>
+
+</head>
+<body>
+
+<div id="sse">
+    <div id="plane"></div>
+    <a href="javascript:WebSocketTest()">运行 WebSocket</a>
+    <input type="file" id="file"/>
+</div>
+
+</body>
+</html>
