@@ -45,6 +45,34 @@ public final class ChatMessageOuterClass {
      * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.FileMessage fileMessage = 3;</code>
      */
     ChatMessage.FileMessageOrBuilder getFileMessageOrBuilder();
+
+    /**
+     * <code>bytes file = 4;</code>
+     */
+    com.google.protobuf.ByteString getFile();
+
+    /**
+     * <code>int32 message_type = 5;</code>
+     */
+    int getMessageType();
+
+    /**
+     * <code>int32 message_timestamp = 6;</code>
+     */
+    int getMessageTimestamp();
+
+    /**
+     * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+     */
+    boolean hasRouterDispatch();
+    /**
+     * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+     */
+    ChatMessage.RouterDispatch getRouterDispatch();
+    /**
+     * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+     */
+    ChatMessage.RouterDispatchOrBuilder getRouterDispatchOrBuilder();
   }
   /**
    * Protobuf type {@code com.cmx.shiroweb.chat.proto.ChatMessage}
@@ -61,6 +89,9 @@ public final class ChatMessageOuterClass {
     private ChatMessage() {
       messageId_ = 0;
       messageContext_ = "";
+      file_ = com.google.protobuf.ByteString.EMPTY;
+      messageType_ = 0;
+      messageTimestamp_ = 0;
     }
 
     @Override
@@ -111,6 +142,34 @@ public final class ChatMessageOuterClass {
 
               break;
             }
+            case 34: {
+
+              file_ = input.readBytes();
+              break;
+            }
+            case 40: {
+
+              messageType_ = input.readInt32();
+              break;
+            }
+            case 48: {
+
+              messageTimestamp_ = input.readInt32();
+              break;
+            }
+            case 58: {
+              RouterDispatch.Builder subBuilder = null;
+              if (routerDispatch_ != null) {
+                subBuilder = routerDispatch_.toBuilder();
+              }
+              routerDispatch_ = input.readMessage(RouterDispatch.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(routerDispatch_);
+                routerDispatch_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
             default: {
               if (!parseUnknownFieldProto3(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -136,7 +195,7 @@ public final class ChatMessageOuterClass {
     }
 
     @Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
       return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
@@ -158,7 +217,12 @@ public final class ChatMessageOuterClass {
           getFileNameBytes();
 
       /**
-       * <code>bytes file_content = 2;</code>
+       * <code>int32 file_size = 2;</code>
+       */
+      int getFileSize();
+
+      /**
+       * <code>bytes file_content = 3;</code>
        */
       com.google.protobuf.ByteString getFileContent();
     }
@@ -176,6 +240,7 @@ public final class ChatMessageOuterClass {
       }
       private FileMessage() {
         fileName_ = "";
+        fileSize_ = 0;
         fileContent_ = com.google.protobuf.ByteString.EMPTY;
       }
 
@@ -209,7 +274,12 @@ public final class ChatMessageOuterClass {
                 fileName_ = s;
                 break;
               }
-              case 18: {
+              case 16: {
+
+                fileSize_ = input.readInt32();
+                break;
+              }
+              case 26: {
 
                 fileContent_ = input.readBytes();
                 break;
@@ -239,7 +309,7 @@ public final class ChatMessageOuterClass {
       }
 
       @Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
         return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -280,10 +350,19 @@ public final class ChatMessageOuterClass {
         }
       }
 
-      public static final int FILE_CONTENT_FIELD_NUMBER = 2;
+      public static final int FILE_SIZE_FIELD_NUMBER = 2;
+      private int fileSize_;
+      /**
+       * <code>int32 file_size = 2;</code>
+       */
+      public int getFileSize() {
+        return fileSize_;
+      }
+
+      public static final int FILE_CONTENT_FIELD_NUMBER = 3;
       private com.google.protobuf.ByteString fileContent_;
       /**
-       * <code>bytes file_content = 2;</code>
+       * <code>bytes file_content = 3;</code>
        */
       public com.google.protobuf.ByteString getFileContent() {
         return fileContent_;
@@ -306,8 +385,11 @@ public final class ChatMessageOuterClass {
         if (!getFileNameBytes().isEmpty()) {
           com.google.protobuf.GeneratedMessageV3.writeString(output, 1, fileName_);
         }
+        if (fileSize_ != 0) {
+          output.writeInt32(2, fileSize_);
+        }
         if (!fileContent_.isEmpty()) {
-          output.writeBytes(2, fileContent_);
+          output.writeBytes(3, fileContent_);
         }
         unknownFields.writeTo(output);
       }
@@ -321,9 +403,13 @@ public final class ChatMessageOuterClass {
         if (!getFileNameBytes().isEmpty()) {
           size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, fileName_);
         }
+        if (fileSize_ != 0) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(2, fileSize_);
+        }
         if (!fileContent_.isEmpty()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(2, fileContent_);
+            .computeBytesSize(3, fileContent_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -343,6 +429,8 @@ public final class ChatMessageOuterClass {
         boolean result = true;
         result = result && getFileName()
             .equals(other.getFileName());
+        result = result && (getFileSize()
+            == other.getFileSize());
         result = result && getFileContent()
             .equals(other.getFileContent());
         result = result && unknownFields.equals(other.unknownFields);
@@ -358,6 +446,8 @@ public final class ChatMessageOuterClass {
         hash = (19 * hash) + getDescriptor().hashCode();
         hash = (37 * hash) + FILE_NAME_FIELD_NUMBER;
         hash = (53 * hash) + getFileName().hashCode();
+        hash = (37 * hash) + FILE_SIZE_FIELD_NUMBER;
+        hash = (53 * hash) + getFileSize();
         hash = (37 * hash) + FILE_CONTENT_FIELD_NUMBER;
         hash = (53 * hash) + getFileContent().hashCode();
         hash = (29 * hash) + unknownFields.hashCode();
@@ -451,7 +541,7 @@ public final class ChatMessageOuterClass {
 
       @Override
       protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          BuilderParent parent) {
         Builder builder = new Builder(parent);
         return builder;
       }
@@ -468,7 +558,7 @@ public final class ChatMessageOuterClass {
         }
 
         @Override
-        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        protected FieldAccessorTable
             internalGetFieldAccessorTable() {
           return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
@@ -481,7 +571,7 @@ public final class ChatMessageOuterClass {
         }
 
         private Builder(
-            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+            BuilderParent parent) {
           super(parent);
           maybeForceBuilderInitialization();
         }
@@ -494,6 +584,8 @@ public final class ChatMessageOuterClass {
         public Builder clear() {
           super.clear();
           fileName_ = "";
+
+          fileSize_ = 0;
 
           fileContent_ = com.google.protobuf.ByteString.EMPTY;
 
@@ -524,6 +616,7 @@ public final class ChatMessageOuterClass {
         public FileMessage buildPartial() {
           FileMessage result = new FileMessage(this);
           result.fileName_ = fileName_;
+          result.fileSize_ = fileSize_;
           result.fileContent_ = fileContent_;
           onBuilt();
           return result;
@@ -576,6 +669,9 @@ public final class ChatMessageOuterClass {
           if (!other.getFileName().isEmpty()) {
             fileName_ = other.fileName_;
             onChanged();
+          }
+          if (other.getFileSize() != 0) {
+            setFileSize(other.getFileSize());
           }
           if (other.getFileContent() != com.google.protobuf.ByteString.EMPTY) {
             setFileContent(other.getFileContent());
@@ -678,15 +774,41 @@ public final class ChatMessageOuterClass {
           return this;
         }
 
+        private int fileSize_ ;
+        /**
+         * <code>int32 file_size = 2;</code>
+         */
+        public int getFileSize() {
+          return fileSize_;
+        }
+        /**
+         * <code>int32 file_size = 2;</code>
+         */
+        public Builder setFileSize(int value) {
+          
+          fileSize_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>int32 file_size = 2;</code>
+         */
+        public Builder clearFileSize() {
+          
+          fileSize_ = 0;
+          onChanged();
+          return this;
+        }
+
         private com.google.protobuf.ByteString fileContent_ = com.google.protobuf.ByteString.EMPTY;
         /**
-         * <code>bytes file_content = 2;</code>
+         * <code>bytes file_content = 3;</code>
          */
         public com.google.protobuf.ByteString getFileContent() {
           return fileContent_;
         }
         /**
-         * <code>bytes file_content = 2;</code>
+         * <code>bytes file_content = 3;</code>
          */
         public Builder setFileContent(com.google.protobuf.ByteString value) {
           if (value == null) {
@@ -698,7 +820,7 @@ public final class ChatMessageOuterClass {
           return this;
         }
         /**
-         * <code>bytes file_content = 2;</code>
+         * <code>bytes file_content = 3;</code>
          */
         public Builder clearFileContent() {
           
@@ -754,6 +876,756 @@ public final class ChatMessageOuterClass {
 
       @Override
       public FileMessage getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+
+    }
+
+    public interface RouterDispatchOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       * <code>string from_user = 1;</code>
+       */
+      String getFromUser();
+      /**
+       * <code>string from_user = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getFromUserBytes();
+
+      /**
+       * <code>string to_user = 2;</code>
+       */
+      String getToUser();
+      /**
+       * <code>string to_user = 2;</code>
+       */
+      com.google.protobuf.ByteString
+          getToUserBytes();
+
+      /**
+       * <code>int32 dispatch_type = 3;</code>
+       */
+      int getDispatchType();
+    }
+    /**
+     * Protobuf type {@code com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch}
+     */
+    public  static final class RouterDispatch extends
+        com.google.protobuf.GeneratedMessageV3 implements
+        // @@protoc_insertion_point(message_implements:com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch)
+        RouterDispatchOrBuilder {
+    private static final long serialVersionUID = 0L;
+      // Use RouterDispatch.newBuilder() to construct.
+      private RouterDispatch(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+      private RouterDispatch() {
+        fromUser_ = "";
+        toUser_ = "";
+        dispatchType_ = 0;
+      }
+
+      @Override
+      public final com.google.protobuf.UnknownFieldSet
+      getUnknownFields() {
+        return this.unknownFields;
+      }
+      private RouterDispatch(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        this();
+        if (extensionRegistry == null) {
+          throw new NullPointerException();
+        }
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                String s = input.readStringRequireUtf8();
+
+                fromUser_ = s;
+                break;
+              }
+              case 18: {
+                String s = input.readStringRequireUtf8();
+
+                toUser_ = s;
+                break;
+              }
+              case 24: {
+
+                dispatchType_ = input.readInt32();
+                break;
+              }
+              default: {
+                if (!parseUnknownFieldProto3(
+                    input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_descriptor;
+      }
+
+      @Override
+      protected FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                RouterDispatch.class, Builder.class);
+      }
+
+      public static final int FROM_USER_FIELD_NUMBER = 1;
+      private volatile Object fromUser_;
+      /**
+       * <code>string from_user = 1;</code>
+       */
+      public String getFromUser() {
+        Object ref = fromUser_;
+        if (ref instanceof String) {
+          return (String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          fromUser_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string from_user = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getFromUserBytes() {
+        Object ref = fromUser_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          fromUser_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int TO_USER_FIELD_NUMBER = 2;
+      private volatile Object toUser_;
+      /**
+       * <code>string to_user = 2;</code>
+       */
+      public String getToUser() {
+        Object ref = toUser_;
+        if (ref instanceof String) {
+          return (String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          toUser_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string to_user = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getToUserBytes() {
+        Object ref = toUser_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          toUser_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int DISPATCH_TYPE_FIELD_NUMBER = 3;
+      private int dispatchType_;
+      /**
+       * <code>int32 dispatch_type = 3;</code>
+       */
+      public int getDispatchType() {
+        return dispatchType_;
+      }
+
+      private byte memoizedIsInitialized = -1;
+      @Override
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      @Override
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        if (!getFromUserBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, fromUser_);
+        }
+        if (!getToUserBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 2, toUser_);
+        }
+        if (dispatchType_ != 0) {
+          output.writeInt32(3, dispatchType_);
+        }
+        unknownFields.writeTo(output);
+      }
+
+      @Override
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (!getFromUserBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, fromUser_);
+        }
+        if (!getToUserBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, toUser_);
+        }
+        if (dispatchType_ != 0) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(3, dispatchType_);
+        }
+        size += unknownFields.getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @Override
+      public boolean equals(final Object obj) {
+        if (obj == this) {
+         return true;
+        }
+        if (!(obj instanceof RouterDispatch)) {
+          return super.equals(obj);
+        }
+        RouterDispatch other = (RouterDispatch) obj;
+
+        boolean result = true;
+        result = result && getFromUser()
+            .equals(other.getFromUser());
+        result = result && getToUser()
+            .equals(other.getToUser());
+        result = result && (getDispatchType()
+            == other.getDispatchType());
+        result = result && unknownFields.equals(other.unknownFields);
+        return result;
+      }
+
+      @Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (37 * hash) + FROM_USER_FIELD_NUMBER;
+        hash = (53 * hash) + getFromUser().hashCode();
+        hash = (37 * hash) + TO_USER_FIELD_NUMBER;
+        hash = (53 * hash) + getToUser().hashCode();
+        hash = (37 * hash) + DISPATCH_TYPE_FIELD_NUMBER;
+        hash = (53 * hash) + getDispatchType();
+        hash = (29 * hash) + unknownFields.hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static RouterDispatch parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static RouterDispatch parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static RouterDispatch parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static RouterDispatch parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static RouterDispatch parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static RouterDispatch parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static RouterDispatch parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static RouterDispatch parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static RouterDispatch parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input);
+      }
+      public static RouterDispatch parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static RouterDispatch parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static RouterDispatch parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+
+      @Override
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+      public static Builder newBuilder(RouterDispatch prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+      @Override
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE
+            ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @Override
+      protected Builder newBuilderForType(
+          BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+          // @@protoc_insertion_point(builder_implements:com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch)
+          RouterDispatchOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_descriptor;
+        }
+
+        @Override
+        protected FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  RouterDispatch.class, Builder.class);
+        }
+
+        // Construct using com.cmx.shiroweb.chat.proto.ChatMessageOuterClass.ChatMessage.RouterDispatch.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessageV3
+                  .alwaysUseFieldBuilders) {
+          }
+        }
+        @Override
+        public Builder clear() {
+          super.clear();
+          fromUser_ = "";
+
+          toUser_ = "";
+
+          dispatchType_ = 0;
+
+          return this;
+        }
+
+        @Override
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_descriptor;
+        }
+
+        @Override
+        public RouterDispatch getDefaultInstanceForType() {
+          return RouterDispatch.getDefaultInstance();
+        }
+
+        @Override
+        public RouterDispatch build() {
+          RouterDispatch result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        @Override
+        public RouterDispatch buildPartial() {
+          RouterDispatch result = new RouterDispatch(this);
+          result.fromUser_ = fromUser_;
+          result.toUser_ = toUser_;
+          result.dispatchType_ = dispatchType_;
+          onBuilt();
+          return result;
+        }
+
+        @Override
+        public Builder clone() {
+          return (Builder) super.clone();
+        }
+        @Override
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            Object value) {
+          return (Builder) super.setField(field, value);
+        }
+        @Override
+        public Builder clearField(
+            com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return (Builder) super.clearField(field);
+        }
+        @Override
+        public Builder clearOneof(
+            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return (Builder) super.clearOneof(oneof);
+        }
+        @Override
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index, Object value) {
+          return (Builder) super.setRepeatedField(field, index, value);
+        }
+        @Override
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            Object value) {
+          return (Builder) super.addRepeatedField(field, value);
+        }
+        @Override
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof RouterDispatch) {
+            return mergeFrom((RouterDispatch)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(RouterDispatch other) {
+          if (other == RouterDispatch.getDefaultInstance()) return this;
+          if (!other.getFromUser().isEmpty()) {
+            fromUser_ = other.fromUser_;
+            onChanged();
+          }
+          if (!other.getToUser().isEmpty()) {
+            toUser_ = other.toUser_;
+            onChanged();
+          }
+          if (other.getDispatchType() != 0) {
+            setDispatchType(other.getDispatchType());
+          }
+          this.mergeUnknownFields(other.unknownFields);
+          onChanged();
+          return this;
+        }
+
+        @Override
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        @Override
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          RouterDispatch parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (RouterDispatch) e.getUnfinishedMessage();
+            throw e.unwrapIOException();
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+
+        private Object fromUser_ = "";
+        /**
+         * <code>string from_user = 1;</code>
+         */
+        public String getFromUser() {
+          Object ref = fromUser_;
+          if (!(ref instanceof String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            String s = bs.toStringUtf8();
+            fromUser_ = s;
+            return s;
+          } else {
+            return (String) ref;
+          }
+        }
+        /**
+         * <code>string from_user = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getFromUserBytes() {
+          Object ref = fromUser_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (String) ref);
+            fromUser_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string from_user = 1;</code>
+         */
+        public Builder setFromUser(
+            String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          fromUser_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string from_user = 1;</code>
+         */
+        public Builder clearFromUser() {
+          
+          fromUser_ = getDefaultInstance().getFromUser();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string from_user = 1;</code>
+         */
+        public Builder setFromUserBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          fromUser_ = value;
+          onChanged();
+          return this;
+        }
+
+        private Object toUser_ = "";
+        /**
+         * <code>string to_user = 2;</code>
+         */
+        public String getToUser() {
+          Object ref = toUser_;
+          if (!(ref instanceof String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            String s = bs.toStringUtf8();
+            toUser_ = s;
+            return s;
+          } else {
+            return (String) ref;
+          }
+        }
+        /**
+         * <code>string to_user = 2;</code>
+         */
+        public com.google.protobuf.ByteString
+            getToUserBytes() {
+          Object ref = toUser_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (String) ref);
+            toUser_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string to_user = 2;</code>
+         */
+        public Builder setToUser(
+            String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          toUser_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string to_user = 2;</code>
+         */
+        public Builder clearToUser() {
+          
+          toUser_ = getDefaultInstance().getToUser();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string to_user = 2;</code>
+         */
+        public Builder setToUserBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          toUser_ = value;
+          onChanged();
+          return this;
+        }
+
+        private int dispatchType_ ;
+        /**
+         * <code>int32 dispatch_type = 3;</code>
+         */
+        public int getDispatchType() {
+          return dispatchType_;
+        }
+        /**
+         * <code>int32 dispatch_type = 3;</code>
+         */
+        public Builder setDispatchType(int value) {
+          
+          dispatchType_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>int32 dispatch_type = 3;</code>
+         */
+        public Builder clearDispatchType() {
+          
+          dispatchType_ = 0;
+          onChanged();
+          return this;
+        }
+        @Override
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFieldsProto3(unknownFields);
+        }
+
+        @Override
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+
+        // @@protoc_insertion_point(builder_scope:com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch)
+      }
+
+      // @@protoc_insertion_point(class_scope:com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch)
+      private static final RouterDispatch DEFAULT_INSTANCE;
+      static {
+        DEFAULT_INSTANCE = new RouterDispatch();
+      }
+
+      public static RouterDispatch getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<RouterDispatch>
+          PARSER = new com.google.protobuf.AbstractParser<RouterDispatch>() {
+        @Override
+        public RouterDispatch parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new RouterDispatch(input, extensionRegistry);
+        }
+      };
+
+      public static com.google.protobuf.Parser<RouterDispatch> parser() {
+        return PARSER;
+      }
+
+      @Override
+      public com.google.protobuf.Parser<RouterDispatch> getParserForType() {
+        return PARSER;
+      }
+
+      @Override
+      public RouterDispatch getDefaultInstanceForType() {
         return DEFAULT_INSTANCE;
       }
 
@@ -823,6 +1695,54 @@ public final class ChatMessageOuterClass {
       return getFileMessage();
     }
 
+    public static final int FILE_FIELD_NUMBER = 4;
+    private com.google.protobuf.ByteString file_;
+    /**
+     * <code>bytes file = 4;</code>
+     */
+    public com.google.protobuf.ByteString getFile() {
+      return file_;
+    }
+
+    public static final int MESSAGE_TYPE_FIELD_NUMBER = 5;
+    private int messageType_;
+    /**
+     * <code>int32 message_type = 5;</code>
+     */
+    public int getMessageType() {
+      return messageType_;
+    }
+
+    public static final int MESSAGE_TIMESTAMP_FIELD_NUMBER = 6;
+    private int messageTimestamp_;
+    /**
+     * <code>int32 message_timestamp = 6;</code>
+     */
+    public int getMessageTimestamp() {
+      return messageTimestamp_;
+    }
+
+    public static final int ROUTER_DISPATCH_FIELD_NUMBER = 7;
+    private RouterDispatch routerDispatch_;
+    /**
+     * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+     */
+    public boolean hasRouterDispatch() {
+      return routerDispatch_ != null;
+    }
+    /**
+     * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+     */
+    public RouterDispatch getRouterDispatch() {
+      return routerDispatch_ == null ? RouterDispatch.getDefaultInstance() : routerDispatch_;
+    }
+    /**
+     * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+     */
+    public RouterDispatchOrBuilder getRouterDispatchOrBuilder() {
+      return getRouterDispatch();
+    }
+
     private byte memoizedIsInitialized = -1;
     @Override
     public final boolean isInitialized() {
@@ -846,6 +1766,18 @@ public final class ChatMessageOuterClass {
       if (fileMessage_ != null) {
         output.writeMessage(3, getFileMessage());
       }
+      if (!file_.isEmpty()) {
+        output.writeBytes(4, file_);
+      }
+      if (messageType_ != 0) {
+        output.writeInt32(5, messageType_);
+      }
+      if (messageTimestamp_ != 0) {
+        output.writeInt32(6, messageTimestamp_);
+      }
+      if (routerDispatch_ != null) {
+        output.writeMessage(7, getRouterDispatch());
+      }
       unknownFields.writeTo(output);
     }
 
@@ -865,6 +1797,22 @@ public final class ChatMessageOuterClass {
       if (fileMessage_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, getFileMessage());
+      }
+      if (!file_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, file_);
+      }
+      if (messageType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, messageType_);
+      }
+      if (messageTimestamp_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, messageTimestamp_);
+      }
+      if (routerDispatch_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(7, getRouterDispatch());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -891,6 +1839,17 @@ public final class ChatMessageOuterClass {
         result = result && getFileMessage()
             .equals(other.getFileMessage());
       }
+      result = result && getFile()
+          .equals(other.getFile());
+      result = result && (getMessageType()
+          == other.getMessageType());
+      result = result && (getMessageTimestamp()
+          == other.getMessageTimestamp());
+      result = result && (hasRouterDispatch() == other.hasRouterDispatch());
+      if (hasRouterDispatch()) {
+        result = result && getRouterDispatch()
+            .equals(other.getRouterDispatch());
+      }
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -909,6 +1868,16 @@ public final class ChatMessageOuterClass {
       if (hasFileMessage()) {
         hash = (37 * hash) + FILEMESSAGE_FIELD_NUMBER;
         hash = (53 * hash) + getFileMessage().hashCode();
+      }
+      hash = (37 * hash) + FILE_FIELD_NUMBER;
+      hash = (53 * hash) + getFile().hashCode();
+      hash = (37 * hash) + MESSAGE_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageType();
+      hash = (37 * hash) + MESSAGE_TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageTimestamp();
+      if (hasRouterDispatch()) {
+        hash = (37 * hash) + ROUTER_DISPATCH_FIELD_NUMBER;
+        hash = (53 * hash) + getRouterDispatch().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -1001,7 +1970,7 @@ public final class ChatMessageOuterClass {
 
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -1018,7 +1987,7 @@ public final class ChatMessageOuterClass {
       }
 
       @Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
         return ChatMessageOuterClass.internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -1031,7 +2000,7 @@ public final class ChatMessageOuterClass {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -1052,6 +2021,18 @@ public final class ChatMessageOuterClass {
         } else {
           fileMessage_ = null;
           fileMessageBuilder_ = null;
+        }
+        file_ = com.google.protobuf.ByteString.EMPTY;
+
+        messageType_ = 0;
+
+        messageTimestamp_ = 0;
+
+        if (routerDispatchBuilder_ == null) {
+          routerDispatch_ = null;
+        } else {
+          routerDispatch_ = null;
+          routerDispatchBuilder_ = null;
         }
         return this;
       }
@@ -1085,6 +2066,14 @@ public final class ChatMessageOuterClass {
           result.fileMessage_ = fileMessage_;
         } else {
           result.fileMessage_ = fileMessageBuilder_.build();
+        }
+        result.file_ = file_;
+        result.messageType_ = messageType_;
+        result.messageTimestamp_ = messageTimestamp_;
+        if (routerDispatchBuilder_ == null) {
+          result.routerDispatch_ = routerDispatch_;
+        } else {
+          result.routerDispatch_ = routerDispatchBuilder_.build();
         }
         onBuilt();
         return result;
@@ -1143,6 +2132,18 @@ public final class ChatMessageOuterClass {
         }
         if (other.hasFileMessage()) {
           mergeFileMessage(other.getFileMessage());
+        }
+        if (other.getFile() != com.google.protobuf.ByteString.EMPTY) {
+          setFile(other.getFile());
+        }
+        if (other.getMessageType() != 0) {
+          setMessageType(other.getMessageType());
+        }
+        if (other.getMessageTimestamp() != 0) {
+          setMessageTimestamp(other.getMessageTimestamp());
+        }
+        if (other.hasRouterDispatch()) {
+          mergeRouterDispatch(other.getRouterDispatch());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1384,6 +2385,204 @@ public final class ChatMessageOuterClass {
         }
         return fileMessageBuilder_;
       }
+
+      private com.google.protobuf.ByteString file_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes file = 4;</code>
+       */
+      public com.google.protobuf.ByteString getFile() {
+        return file_;
+      }
+      /**
+       * <code>bytes file = 4;</code>
+       */
+      public Builder setFile(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        file_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes file = 4;</code>
+       */
+      public Builder clearFile() {
+        
+        file_ = getDefaultInstance().getFile();
+        onChanged();
+        return this;
+      }
+
+      private int messageType_ ;
+      /**
+       * <code>int32 message_type = 5;</code>
+       */
+      public int getMessageType() {
+        return messageType_;
+      }
+      /**
+       * <code>int32 message_type = 5;</code>
+       */
+      public Builder setMessageType(int value) {
+        
+        messageType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 message_type = 5;</code>
+       */
+      public Builder clearMessageType() {
+        
+        messageType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int messageTimestamp_ ;
+      /**
+       * <code>int32 message_timestamp = 6;</code>
+       */
+      public int getMessageTimestamp() {
+        return messageTimestamp_;
+      }
+      /**
+       * <code>int32 message_timestamp = 6;</code>
+       */
+      public Builder setMessageTimestamp(int value) {
+        
+        messageTimestamp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 message_timestamp = 6;</code>
+       */
+      public Builder clearMessageTimestamp() {
+        
+        messageTimestamp_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private RouterDispatch routerDispatch_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          RouterDispatch, RouterDispatch.Builder, RouterDispatchOrBuilder> routerDispatchBuilder_;
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public boolean hasRouterDispatch() {
+        return routerDispatchBuilder_ != null || routerDispatch_ != null;
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public RouterDispatch getRouterDispatch() {
+        if (routerDispatchBuilder_ == null) {
+          return routerDispatch_ == null ? RouterDispatch.getDefaultInstance() : routerDispatch_;
+        } else {
+          return routerDispatchBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public Builder setRouterDispatch(RouterDispatch value) {
+        if (routerDispatchBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          routerDispatch_ = value;
+          onChanged();
+        } else {
+          routerDispatchBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public Builder setRouterDispatch(
+          RouterDispatch.Builder builderForValue) {
+        if (routerDispatchBuilder_ == null) {
+          routerDispatch_ = builderForValue.build();
+          onChanged();
+        } else {
+          routerDispatchBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public Builder mergeRouterDispatch(RouterDispatch value) {
+        if (routerDispatchBuilder_ == null) {
+          if (routerDispatch_ != null) {
+            routerDispatch_ =
+              RouterDispatch.newBuilder(routerDispatch_).mergeFrom(value).buildPartial();
+          } else {
+            routerDispatch_ = value;
+          }
+          onChanged();
+        } else {
+          routerDispatchBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public Builder clearRouterDispatch() {
+        if (routerDispatchBuilder_ == null) {
+          routerDispatch_ = null;
+          onChanged();
+        } else {
+          routerDispatch_ = null;
+          routerDispatchBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public RouterDispatch.Builder getRouterDispatchBuilder() {
+        
+        onChanged();
+        return getRouterDispatchFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      public RouterDispatchOrBuilder getRouterDispatchOrBuilder() {
+        if (routerDispatchBuilder_ != null) {
+          return routerDispatchBuilder_.getMessageOrBuilder();
+        } else {
+          return routerDispatch_ == null ?
+              RouterDispatch.getDefaultInstance() : routerDispatch_;
+        }
+      }
+      /**
+       * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          RouterDispatch, RouterDispatch.Builder, RouterDispatchOrBuilder>
+          getRouterDispatchFieldBuilder() {
+        if (routerDispatchBuilder_ == null) {
+          routerDispatchBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              RouterDispatch, RouterDispatch.Builder, RouterDispatchOrBuilder>(
+                  getRouterDispatch(),
+                  getParentForChildren(),
+                  isClean());
+          routerDispatch_ = null;
+        }
+        return routerDispatchBuilder_;
+      }
       @Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1447,6 +2646,11 @@ public final class ChatMessageOuterClass {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1457,12 +2661,18 @@ public final class ChatMessageOuterClass {
   static {
     String[] descriptorData = {
       "\n\021ChatMessage.proto\022\033com.cmx.shiroweb.ch" +
-      "at.proto\"\275\001\n\013ChatMessage\022\022\n\nmessage_id\030\001" +
+      "at.proto\"\256\003\n\013ChatMessage\022\022\n\nmessage_id\030\001" +
       " \001(\005\022\027\n\017message_context\030\002 \001(\t\022I\n\013fileMes" +
       "sage\030\003 \001(\01324.com.cmx.shiroweb.chat.proto" +
-      ".ChatMessage.FileMessage\0326\n\013FileMessage\022" +
-      "\021\n\tfile_name\030\001 \001(\t\022\024\n\014file_content\030\002 \001(\014" +
-      "b\006proto3"
+      ".ChatMessage.FileMessage\022\014\n\004file\030\004 \001(\014\022\024" +
+      "\n\014message_type\030\005 \001(\005\022\031\n\021message_timestam" +
+      "p\030\006 \001(\005\022P\n\017router_dispatch\030\007 \001(\01327.com.c" +
+      "mx.shiroweb.chat.proto.ChatMessage.Route" +
+      "rDispatch\032I\n\013FileMessage\022\021\n\tfile_name\030\001 " +
+      "\001(\t\022\021\n\tfile_size\030\002 \001(\005\022\024\n\014file_content\030\003" +
+      " \001(\014\032K\n\016RouterDispatch\022\021\n\tfrom_user\030\001 \001(" +
+      "\t\022\017\n\007to_user\030\002 \001(\t\022\025\n\rdispatch_type\030\003 \001(" +
+      "\005b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1481,13 +2691,19 @@ public final class ChatMessageOuterClass {
     internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_descriptor,
-        new String[] { "MessageId", "MessageContext", "FileMessage", });
+        new String[] { "MessageId", "MessageContext", "FileMessage", "File", "MessageType", "MessageTimestamp", "RouterDispatch", });
     internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_descriptor =
       internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_descriptor.getNestedTypes().get(0);
     internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_descriptor,
-        new String[] { "FileName", "FileContent", });
+        new String[] { "FileName", "FileSize", "FileContent", });
+    internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_descriptor =
+      internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_descriptor.getNestedTypes().get(1);
+    internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_RouterDispatch_descriptor,
+        new String[] { "FromUser", "ToUser", "DispatchType", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

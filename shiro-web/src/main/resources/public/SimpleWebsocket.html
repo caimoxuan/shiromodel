@@ -2,11 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script src="protobuf.js"></script>
+    <script src="protobuf.min.js"></script>
     <title>websocket</title>
 
     <script type="text/javascript">
-        var WSMessage;
+        var chatMessage;
         var wsmessage;
         var buffer;
         function WebSocketTest()
@@ -20,24 +20,18 @@
 
                 ws.onopen = function()
                 {
-                    // Web Socket 已连接上，使用 send() 方法发送数据
-                    //ws.send("发送数据");
-                    //alert("数据发送中...");
-                    //sendFile(ws);
-
                     protobuf.load("ChatMessage.proto", function(err, root){
                         if(err) {console.log(err);}
                         console.log(root);
                         let files = document.getElementById("file").files;
                         let reader = new FileReader();
                         reader.readAsArrayBuffer(files[0]);
-                        //reader.readAsBinaryString(files[0])
                         reader.onload = function load(evt){
                             console.log("start read file", evt.target);
                             let blob = evt.target.result;
-                            WSMessage = root.lookupType("com.cmx.shiroweb.chat.proto.ChatMessage");
-                            wsmessage = WSMessage.create({messageId:123123,messageContext:"测试",fileMessage:{fileName:"test",fileContent:new Uint8Array(blob)}});
-                            buffer = WSMessage.encode(wsmessage).finish();
+                            chatMessage = root.lookupType("com.cmx.shiroweb.chat.proto.ChatMessage");
+                            wsmessage = chatMessage.create({messageId:123123,messageContext:"测试",fileMessage:{fileName:"test",fileContent:new Uint8Array(blob)}});
+                            buffer = chatMessage.encode(wsmessage).finish();
                             ws.send(buffer);
                         }
                     })
@@ -55,13 +49,10 @@
                         reader.onload=function(eve){
                             if(eve.target.readyState==FileReader.DONE)
                             {
-                                //var img = document.createElement("img");
-                                //img.src=eve.target.result;
-                                //document.getElementById("plane").appendChild(img);
                                 var buf = new Uint8Array(eve.target.result);
-                                console.log(WSMessage.decode(buf));
+                                console.log(chatMessage.decode(buf));
                                 let readerImg = new FileReader();
-                                let uni8Array = WSMessage.decode(buf).fileMessage.fileContent;
+                                let uni8Array = chatMessage.decode(buf).fileMessage.fileContent;
                                 readerImg.readAsDataURL(new Blob([uni8Array]));
                                 readerImg.onload = function(res) {
                                     var img = document.createElement("img");

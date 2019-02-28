@@ -19,6 +19,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.time.Instant;
 
 
 @Slf4j
@@ -43,7 +43,12 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
 
     private WebSocketServerHandshaker handshaker;
 
+    /**
+     *   这样的话一个文件正在后台传输， 同时另一个文件进来会有问题（无法多个客户端同时上传文件）
+     */
     private ByteBuf bytes = Unpooled.buffer();
+
+    private final String UPLOAD_FILE_PATH = "F:\\upload\\";
 
     @PostConstruct
     public void initChatHall(){
@@ -109,7 +114,7 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
             return;
         }
 
-        //大数据流消息
+        //大数据流消息，如果图片比较大，需要合并， 如果传的是文件， 需要判断messageType来保存文件
         if(frame instanceof ContinuationWebSocketFrame){
             System.out.println("get continuation webSocket message");
             ContinuationWebSocketFrame continuationWebSocketFrame = ((ContinuationWebSocketFrame)frame);
@@ -122,12 +127,14 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
                 bytes.getBytes(bytes.readerIndex(), array, 0, length);
                 ChatMessageOuterClass.ChatMessage chatMessage = ChatMessageOuterClass.ChatMessage.parseFrom(array);
                 System.out.println(chatMessage.getMessageId() + " , " + chatMessage.getMessageContext());
-                File f = new File(chatMessage.getFileMessage().getFileName());
+                File f = new File(UPLOAD_FILE_PATH + chatMessage.getFileMessage().getFileName());
                 FileOutputStream fos = new FileOutputStream(f);
                 fos.write(chatMessage.getFileMessage().getFileContent().toByteArray());
                 fos.close();
+                //ctx.channel().writeAndFlush(new BinaryWebSocketFrame(bytes.retain()));
                 bytes.clear();
             }else{
+
                 bytes.writeBytes(byteBuf);
                 System.out.println(bytes.readableBytes());
             }
@@ -157,11 +164,11 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
             return ;
         }
 
-        // 本例程仅支持文本消息，不支持二进制消息
-        if (!(frame instanceof TextWebSocketFrame)) {
-           log.info("get unSupport frame : {}", frame.getClass());
-            throw new UnsupportedOperationException(
-                    String.format("%s frame types not supported", frame.getClass().getName()));
+        // 本例中的text也会转换成BinaryWebSocketFrame
+        if ((frame instanceof TextWebSocketFrame)) {
+            String messageContent = ((TextWebSocketFrame) frame).text();
+            System.out.println(messageContent);
+            return;
         }
         //开始分发消息前存储当前channel
         ChannelManager.setChannel(ctx);
@@ -183,7 +190,7 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
             return;
         }
 
-        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory("ws:/"+ctx.channel()+ "/websocket",null,false);
+        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory("ws:/"+ctx.channel()+ "/websocket",null,false, 65535 * 1024);
         handshaker = wsFactory.newHandshaker(req);
 
         if(handshaker == null){
