@@ -48,7 +48,7 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
      */
     private ByteBuf bytes = Unpooled.buffer();
 
-    private final String UPLOAD_FILE_PATH = "F:\\upload\\";
+    private static final String UPLOAD_FILE_PATH = "F:\\upload\\";
 
     @PostConstruct
     public void initChatHall(){
@@ -91,93 +91,85 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
      */
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+        //第一次建立http连接
         if (msg instanceof FullHttpRequest) {
             handleHttpRequest(ctx, ((FullHttpRequest) msg));
-            // WebSocket接入
-        } else if (msg instanceof WebSocketFrame) {
+            // 否则是websocket的消息， 这时已经被protobuf解析
+        } else {
             log.info("handler webSocket message!");
-            handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
+            handlerWebSocketFrame(ctx, msg);
         }
     }
 
-    private void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+    private void handlerWebSocketFrame(ChannelHandlerContext ctx, Object message) throws Exception {
         // 判断是否关闭链路的指令
-        if (frame instanceof CloseWebSocketFrame) {
+        if (message instanceof CloseWebSocketFrame) {
             log.info("get close webSocket message;");
-            handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+            handshaker.close(ctx.channel(), ((CloseWebSocketFrame) message).retain());
             return;
         }
         // 判断是否ping消息
-        if (frame instanceof PingWebSocketFrame) {
+        if (message instanceof PingWebSocketFrame) {
             log.info("get ping webSocket message");
-            ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
+            ctx.channel().write(new PongWebSocketFrame(((PingWebSocketFrame)message).content().retain()));
             return;
         }
-
-        //大数据流消息，如果图片比较大，需要合并， 如果传的是文件， 需要判断messageType来保存文件
-        if(frame instanceof ContinuationWebSocketFrame){
-            System.out.println("get continuation webSocket message");
-            ContinuationWebSocketFrame continuationWebSocketFrame = ((ContinuationWebSocketFrame)frame);
-            ByteBuf byteBuf = continuationWebSocketFrame.retain().content();
-            if(continuationWebSocketFrame.isFinalFragment()) {
-                bytes.writeBytes(byteBuf);
-                System.out.println("finish : " + bytes.readableBytes());
-                final int length = bytes.readableBytes();
-                final byte[] array = new byte[length];
-                bytes.getBytes(bytes.readerIndex(), array, 0, length);
-                ChatMessageOuterClass.ChatMessage chatMessage = ChatMessageOuterClass.ChatMessage.parseFrom(array);
-                System.out.println(chatMessage.getMessageId() + " , " + chatMessage.getMessageContext());
-                File f = new File(UPLOAD_FILE_PATH + chatMessage.getFileMessage().getFileName());
-                FileOutputStream fos = new FileOutputStream(f);
-                fos.write(chatMessage.getFileMessage().getFileContent().toByteArray());
-                fos.close();
-                //ctx.channel().writeAndFlush(new BinaryWebSocketFrame(bytes.retain()));
-                bytes.clear();
-            }else{
-
-                bytes.writeBytes(byteBuf);
-                System.out.println(bytes.readableBytes());
-            }
-
-
-            //ctx.channel().writeAndFlush(frame.retain());
-            return;
-        }
-
-
+//
+//        //大数据流消息，如果图片比较大，需要合并， 如果传的是文件， 需要判断messageType来保存文件
+//        if(frame instanceof ContinuationWebSocketFrame){
+//            System.out.println("get continuation webSocket message");
+//            ContinuationWebSocketFrame continuationWebSocketFrame = ((ContinuationWebSocketFrame)frame);
+//            ByteBuf byteBuf = continuationWebSocketFrame.retain().content();
+//            if(continuationWebSocketFrame.isFinalFragment()) {
+//                bytes.writeBytes(byteBuf);
+//                System.out.println("finish : " + bytes.readableBytes());
+//                final int length = bytes.readableBytes();
+//                final byte[] array = new byte[length];
+//                bytes.getBytes(bytes.readerIndex(), array, 0, length);
+//                ChatMessageOuterClass.ChatMessage chatMessage = ChatMessageOuterClass.ChatMessage.parseFrom(array);
+//                System.out.println(chatMessage.getMessageId() + " , " + chatMessage.getMessageContext());
+//                File f = new File(UPLOAD_FILE_PATH + chatMessage.getFileMessage().getFileName());
+//                FileOutputStream fos = new FileOutputStream(f);
+//                fos.write(chatMessage.getFileMessage().getFileContent().toByteArray());
+//                fos.close();
+//                //ctx.channel().writeAndFlush(new BinaryWebSocketFrame(bytes.retain()));
+//                bytes.clear();
+//            }else{
+//
+//                bytes.writeBytes(byteBuf);
+//                System.out.println(bytes.readableBytes());
+//            }
+//
+//
+//            //ctx.channel().writeAndFlush(frame.retain());
+//            return;
+//        }
+//
+//
         //二进制消息
-        if (frame instanceof BinaryWebSocketFrame) {
+        if (message instanceof ChatMessageOuterClass.ChatMessage) {
             log.info("get binary webSocket message");
 
-            if(frame.isFinalFragment()){
-                ByteBuf content =  frame.content();
-                final int length = content.readableBytes();
-                final byte[] array = new byte[length];
-                content.getBytes(content.readerIndex(), array, 0, length);
-                ChatMessageOuterClass.ChatMessage chatMessage = ChatMessageOuterClass.ChatMessage.parseFrom(array);
-                System.out.println(chatMessage.getMessageId() + ":" + chatMessage.getMessageContext() + ":" + chatMessage.getFileMessage());
-                ctx.channel().writeAndFlush(frame.retain());
-            }else{
-                bytes.writeBytes(frame.content());
-                System.out.println(bytes.readableBytes());
-            }
+            ctx.writeAndFlush(message);
             return ;
         }
-
-        // 本例中的text也会转换成BinaryWebSocketFrame
-        if ((frame instanceof TextWebSocketFrame)) {
-            String messageContent = ((TextWebSocketFrame) frame).text();
-            System.out.println(messageContent);
-            return;
-        }
+//
+//        // 本例中的text也会转换成BinaryWebSocketFrame
+//        if ((frame instanceof TextWebSocketFrame)) {
+//            String messageContent = ((TextWebSocketFrame) frame).text();
+//            System.out.println(messageContent);
+//            return;
+//        }
         //开始分发消息前存储当前channel
         ChannelManager.setChannel(ctx);
-        //返回应答消息
-        String request = ((TextWebSocketFrame) frame).text();
-        messageDispatcher.dispatchMessage(request);
-
-       //完成一次通话清除当前保存的用户
-        ChannelManager.remove();
+        try {
+            messageDispatcher.dispatchMessage("");
+        }catch(Exception e){
+            log.error("dispatch message get error : {}", e);
+        }finally {
+            //完成一次通话清除当前保存的用户
+            ChannelManager.remove();
+        }
     }
 
 
