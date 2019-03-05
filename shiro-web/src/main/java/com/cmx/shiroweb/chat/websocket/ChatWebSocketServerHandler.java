@@ -8,7 +8,8 @@ import com.cmx.shiroweb.chat.component.facilities.NormalRoom;
 import com.cmx.shiroweb.chat.component.facilities.RoomManager;
 import com.cmx.shiroweb.chat.constant.DefaultConstant;
 import com.cmx.shiroweb.chat.proto.ChatMessageOuterClass;
-import io.netty.buffer.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -19,15 +20,12 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.websocketx.*;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileOutputStream;
 
 
 @Slf4j
@@ -43,13 +41,6 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
 
     private WebSocketServerHandshaker handshaker;
 
-    /**
-     *   这样的话一个文件正在后台传输， 同时另一个文件进来会有问题（无法多个客户端同时上传文件）
-     */
-    private ByteBuf bytes = Unpooled.buffer();
-
-    private static final String UPLOAD_FILE_PATH = "F:\\upload\\";
-
     @PostConstruct
     public void initChatHall(){
         ChatRoom chatHall = new NormalRoom(DefaultConstant.DEFAULT_HALL_ID, DefaultConstant.DFFAULT_HALL_NAME);
@@ -64,7 +55,7 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 添加
         roomManager.getHall().getRoomChannelGroup().add(ctx.channel());
-        System.out.println("客户端与服务端连接开启：" + ctx.channel().remoteAddress().toString());
+        log.info("客户端与服务端连接开启：{}", ctx.channel().remoteAddress().toString());
     }
 
     /**
@@ -149,26 +140,17 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
         //二进制消息
         if (message instanceof ChatMessageOuterClass.ChatMessage) {
             log.info("get binary webSocket message");
-
-            ctx.writeAndFlush(message);
-            return ;
-        }
-//
-//        // 本例中的text也会转换成BinaryWebSocketFrame
-//        if ((frame instanceof TextWebSocketFrame)) {
-//            String messageContent = ((TextWebSocketFrame) frame).text();
-//            System.out.println(messageContent);
-//            return;
-//        }
-        //开始分发消息前存储当前channel
-        ChannelManager.setChannel(ctx);
-        try {
-            messageDispatcher.dispatchMessage("");
-        }catch(Exception e){
-            log.error("dispatch message get error : {}", e);
-        }finally {
-            //完成一次通话清除当前保存的用户
-            ChannelManager.remove();
+            ChatMessageOuterClass.ChatMessage chatMessage = ((ChatMessageOuterClass.ChatMessage)message);
+            //开始分发消息前存储当前channel
+            ChannelManager.setChannel(ctx);
+            try {
+                messageDispatcher.dispatchMessage(chatMessage);
+            }catch(Exception e){
+                log.error("dispatch message get error : {}", e);
+            }finally {
+                //完成一次通话清除当前保存的用户
+                ChannelManager.remove();
+            }
         }
     }
 

@@ -1,22 +1,31 @@
 package com.cmx.shiroweb.chat.component.message.handler;
 
+import com.cmx.shiroweb.chat.channel.ChannelManager;
+import com.cmx.shiroweb.chat.component.message.response.ProtobufBinaryWebsocketFrameResponse;
 import com.cmx.shiroweb.chat.enums.MessageType;
 import com.cmx.shiroweb.chat.proto.ChatMessageOuterClass;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * @author cmx
  * @date 2019/3/1
  */
-public class UserMessageHandler implements ProtoBufMessageHandler {
-
-    @Setter
-    private ProtoBufMessageHandler nextHandler;
+@Slf4j
+@Component
+public class UserMessageHandler extends ProtoBufMessageHandler {
 
     @Override
     public void handleMessage(ChatMessageOuterClass.ChatMessage chatMessage) {
-        if(MessageType.USER.getCode() == chatMessage.getMessageType()){
-            System.out.println("handler user message");
+        if(MessageType.TEXT.getCode() == chatMessage.getMessageType() ||
+           MessageType.EMOJI.getCode() == chatMessage.getMessageType() ||
+           MessageType.IMG.getCode() == chatMessage.getMessageType()){
+            log.info("handler user message, messageId : {}", chatMessage.getMessageId());
+            messageRouter.route(chatMessage);
+            saveMessage(chatMessage);
         }else{
             nextHandler.handleMessage(chatMessage);
         }

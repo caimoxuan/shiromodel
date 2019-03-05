@@ -16,7 +16,7 @@ public abstract class ChatRoom {
 
     protected Map<Long, ChannelId> userList;
 
-    public ChannelGroup roomChannelGroup;
+    protected ChannelGroup roomChannelGroup;
 
     /**
      * 加入

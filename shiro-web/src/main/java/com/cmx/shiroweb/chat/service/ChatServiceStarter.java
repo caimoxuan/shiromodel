@@ -24,8 +24,7 @@ public class ChatServiceStarter {
 
     @PostConstruct
     public void startServer(){
-        Thread t = new Thread(new ChatRunner());
-        t.start();
+        new Thread(new ChatRunner()).start();
     }
 
     class ChatRunner implements Runnable {
@@ -45,7 +44,6 @@ public class ChatServiceStarter {
                 b.channel(NioServerSocketChannel.class);
                 // ChildChannelHandler 对出入的数据进行的业务操作,其继承ChannelInitializer
                 b.childHandler(chatChannelHandler);
-                System.out.println("服务端开启等待客户端连接 ... ...");
                 Channel ch = b.bind(7397).sync().channel();
                 ch.closeFuture().sync();
             } catch (Exception e) {

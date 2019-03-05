@@ -5,8 +5,17 @@ message ChatMessage {
 	string message_context = 2;
 	message FileMessage {
 		string file_name = 1;
-		bytes file_content = 2;
+		int32 file_size = 2;
+		bytes file_content = 3;
 	}
 	FileMessage fileMessage = 3;
-	bytes file = 4;
-}
+	string file_path = 4;
+	int32 message_type = 5;
+	int32 message_timestamp = 6;
+	message RouterDispatch {
+		string from_user = 1;
+		string to_user = 2;
+		int32 dispatch_type = 3;
+	}
+	RouterDispatch router_dispatch = 7;
+}  

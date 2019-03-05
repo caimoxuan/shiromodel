@@ -23,12 +23,12 @@ public class ChatMessageListener implements MessageListener {
     @Override
     public void onMessage(MessageEvent messageEvent) {
         Message message = (Message) messageEvent.getSource();
-        if(MessageType.USER.name().equals(message.getMessageType())){
+        if(MessageType.TEXT.name().equals(message.getMessageType())){
             if(message.getReceiveUser() != null){
                 Long userId = message.getReceiveUser();
                 //单播
                 ChannelId channelId = roomManager.getHall().getUserList().get(userId);
-                Channel channel = roomManager.getHall().roomChannelGroup.find(channelId);
+                Channel channel = roomManager.getHall().getRoomChannelGroup().find(channelId);
                 if(channel != null){
                     TextWebSocketFrame tws = new TextWebSocketFrame(JSON.toJSONString(message));
                     channel.writeAndFlush(tws);

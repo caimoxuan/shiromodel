@@ -47,9 +47,14 @@ public final class ChatMessageOuterClass {
     ChatMessage.FileMessageOrBuilder getFileMessageOrBuilder();
 
     /**
-     * <code>bytes file = 4;</code>
+     * <code>string file_path = 4;</code>
      */
-    com.google.protobuf.ByteString getFile();
+    String getFilePath();
+    /**
+     * <code>string file_path = 4;</code>
+     */
+    com.google.protobuf.ByteString
+        getFilePathBytes();
 
     /**
      * <code>int32 message_type = 5;</code>
@@ -89,7 +94,7 @@ public final class ChatMessageOuterClass {
     private ChatMessage() {
       messageId_ = 0;
       messageContext_ = "";
-      file_ = com.google.protobuf.ByteString.EMPTY;
+      filePath_ = "";
       messageType_ = 0;
       messageTimestamp_ = 0;
     }
@@ -143,8 +148,9 @@ public final class ChatMessageOuterClass {
               break;
             }
             case 34: {
+              String s = input.readStringRequireUtf8();
 
-              file_ = input.readBytes();
+              filePath_ = s;
               break;
             }
             case 40: {
@@ -1695,13 +1701,38 @@ public final class ChatMessageOuterClass {
       return getFileMessage();
     }
 
-    public static final int FILE_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString file_;
+    public static final int FILE_PATH_FIELD_NUMBER = 4;
+    private volatile Object filePath_;
     /**
-     * <code>bytes file = 4;</code>
+     * <code>string file_path = 4;</code>
      */
-    public com.google.protobuf.ByteString getFile() {
-      return file_;
+    public String getFilePath() {
+      Object ref = filePath_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        filePath_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string file_path = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getFilePathBytes() {
+      Object ref = filePath_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        filePath_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int MESSAGE_TYPE_FIELD_NUMBER = 5;
@@ -1766,8 +1797,8 @@ public final class ChatMessageOuterClass {
       if (fileMessage_ != null) {
         output.writeMessage(3, getFileMessage());
       }
-      if (!file_.isEmpty()) {
-        output.writeBytes(4, file_);
+      if (!getFilePathBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, filePath_);
       }
       if (messageType_ != 0) {
         output.writeInt32(5, messageType_);
@@ -1798,9 +1829,8 @@ public final class ChatMessageOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, getFileMessage());
       }
-      if (!file_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, file_);
+      if (!getFilePathBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, filePath_);
       }
       if (messageType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -1839,8 +1869,8 @@ public final class ChatMessageOuterClass {
         result = result && getFileMessage()
             .equals(other.getFileMessage());
       }
-      result = result && getFile()
-          .equals(other.getFile());
+      result = result && getFilePath()
+          .equals(other.getFilePath());
       result = result && (getMessageType()
           == other.getMessageType());
       result = result && (getMessageTimestamp()
@@ -1869,8 +1899,8 @@ public final class ChatMessageOuterClass {
         hash = (37 * hash) + FILEMESSAGE_FIELD_NUMBER;
         hash = (53 * hash) + getFileMessage().hashCode();
       }
-      hash = (37 * hash) + FILE_FIELD_NUMBER;
-      hash = (53 * hash) + getFile().hashCode();
+      hash = (37 * hash) + FILE_PATH_FIELD_NUMBER;
+      hash = (53 * hash) + getFilePath().hashCode();
       hash = (37 * hash) + MESSAGE_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getMessageType();
       hash = (37 * hash) + MESSAGE_TIMESTAMP_FIELD_NUMBER;
@@ -2022,7 +2052,7 @@ public final class ChatMessageOuterClass {
           fileMessage_ = null;
           fileMessageBuilder_ = null;
         }
-        file_ = com.google.protobuf.ByteString.EMPTY;
+        filePath_ = "";
 
         messageType_ = 0;
 
@@ -2067,7 +2097,7 @@ public final class ChatMessageOuterClass {
         } else {
           result.fileMessage_ = fileMessageBuilder_.build();
         }
-        result.file_ = file_;
+        result.filePath_ = filePath_;
         result.messageType_ = messageType_;
         result.messageTimestamp_ = messageTimestamp_;
         if (routerDispatchBuilder_ == null) {
@@ -2133,8 +2163,9 @@ public final class ChatMessageOuterClass {
         if (other.hasFileMessage()) {
           mergeFileMessage(other.getFileMessage());
         }
-        if (other.getFile() != com.google.protobuf.ByteString.EMPTY) {
-          setFile(other.getFile());
+        if (!other.getFilePath().isEmpty()) {
+          filePath_ = other.filePath_;
+          onChanged();
         }
         if (other.getMessageType() != 0) {
           setMessageType(other.getMessageType());
@@ -2386,31 +2417,71 @@ public final class ChatMessageOuterClass {
         return fileMessageBuilder_;
       }
 
-      private com.google.protobuf.ByteString file_ = com.google.protobuf.ByteString.EMPTY;
+      private Object filePath_ = "";
       /**
-       * <code>bytes file = 4;</code>
+       * <code>string file_path = 4;</code>
        */
-      public com.google.protobuf.ByteString getFile() {
-        return file_;
+      public String getFilePath() {
+        Object ref = filePath_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          filePath_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
       }
       /**
-       * <code>bytes file = 4;</code>
+       * <code>string file_path = 4;</code>
        */
-      public Builder setFile(com.google.protobuf.ByteString value) {
+      public com.google.protobuf.ByteString
+          getFilePathBytes() {
+        Object ref = filePath_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          filePath_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string file_path = 4;</code>
+       */
+      public Builder setFilePath(
+          String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        file_ = value;
+        filePath_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>bytes file = 4;</code>
+       * <code>string file_path = 4;</code>
        */
-      public Builder clearFile() {
+      public Builder clearFilePath() {
         
-        file_ = getDefaultInstance().getFile();
+        filePath_ = getDefaultInstance().getFilePath();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string file_path = 4;</code>
+       */
+      public Builder setFilePathBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        filePath_ = value;
         onChanged();
         return this;
       }
@@ -2661,18 +2732,18 @@ public final class ChatMessageOuterClass {
   static {
     String[] descriptorData = {
       "\n\021ChatMessage.proto\022\033com.cmx.shiroweb.ch" +
-      "at.proto\"\256\003\n\013ChatMessage\022\022\n\nmessage_id\030\001" +
+      "at.proto\"\263\003\n\013ChatMessage\022\022\n\nmessage_id\030\001" +
       " \001(\005\022\027\n\017message_context\030\002 \001(\t\022I\n\013fileMes" +
       "sage\030\003 \001(\01324.com.cmx.shiroweb.chat.proto" +
-      ".ChatMessage.FileMessage\022\014\n\004file\030\004 \001(\014\022\024" +
-      "\n\014message_type\030\005 \001(\005\022\031\n\021message_timestam" +
-      "p\030\006 \001(\005\022P\n\017router_dispatch\030\007 \001(\01327.com.c" +
-      "mx.shiroweb.chat.proto.ChatMessage.Route" +
-      "rDispatch\032I\n\013FileMessage\022\021\n\tfile_name\030\001 " +
-      "\001(\t\022\021\n\tfile_size\030\002 \001(\005\022\024\n\014file_content\030\003" +
-      " \001(\014\032K\n\016RouterDispatch\022\021\n\tfrom_user\030\001 \001(" +
-      "\t\022\017\n\007to_user\030\002 \001(\t\022\025\n\rdispatch_type\030\003 \001(" +
-      "\005b\006proto3"
+      ".ChatMessage.FileMessage\022\021\n\tfile_path\030\004 " +
+      "\001(\t\022\024\n\014message_type\030\005 \001(\005\022\031\n\021message_tim" +
+      "estamp\030\006 \001(\005\022P\n\017router_dispatch\030\007 \001(\01327." +
+      "com.cmx.shiroweb.chat.proto.ChatMessage." +
+      "RouterDispatch\032I\n\013FileMessage\022\021\n\tfile_na" +
+      "me\030\001 \001(\t\022\021\n\tfile_size\030\002 \001(\005\022\024\n\014file_cont" +
+      "ent\030\003 \001(\014\032K\n\016RouterDispatch\022\021\n\tfrom_user" +
+      "\030\001 \001(\t\022\017\n\007to_user\030\002 \001(\t\022\025\n\rdispatch_type" +
+      "\030\003 \001(\005b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2691,7 +2762,7 @@ public final class ChatMessageOuterClass {
     internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_descriptor,
-        new String[] { "MessageId", "MessageContext", "FileMessage", "File", "MessageType", "MessageTimestamp", "RouterDispatch", });
+        new String[] { "MessageId", "MessageContext", "FileMessage", "FilePath", "MessageType", "MessageTimestamp", "RouterDispatch", });
     internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_descriptor =
       internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_descriptor.getNestedTypes().get(0);
     internal_static_com_cmx_shiroweb_chat_proto_ChatMessage_FileMessage_fieldAccessorTable = new
