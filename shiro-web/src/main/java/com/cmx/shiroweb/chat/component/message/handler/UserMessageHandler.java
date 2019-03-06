@@ -1,12 +1,7 @@
 package com.cmx.shiroweb.chat.component.message.handler;
 
-import com.cmx.shiroweb.chat.channel.ChannelManager;
-import com.cmx.shiroweb.chat.component.message.response.ProtobufBinaryWebsocketFrameResponse;
 import com.cmx.shiroweb.chat.enums.MessageType;
 import com.cmx.shiroweb.chat.proto.ChatMessageOuterClass;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

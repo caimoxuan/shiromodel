@@ -44,7 +44,6 @@ public class ChatWebSocketServerHandler extends SimpleChannelInboundHandler<Obje
     @PostConstruct
     public void initChatHall(){
         ChatRoom chatHall = new NormalRoom(DefaultConstant.DEFAULT_HALL_ID, DefaultConstant.DFFAULT_HALL_NAME);
-        chatHall.setRoomChannelGroup(GlobalChannel.group);
         roomManager.registerRoom(chatHall);
     }
 

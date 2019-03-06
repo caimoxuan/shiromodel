@@ -38,7 +38,7 @@ public class LoginMessageListener implements MessageListener {
             }
             ChannelHandlerContext channel = ChannelManager.getChannel();
             if(channel == null || message.getSendUser() == null){
-                log.error("can not find user info, channel : {}, userId: {}", channel.channel().id(), message.getSendUser());
+                log.error("can not find user info, channel : {}, userId: {}", channel, message.getSendUser());
                 return;
             }
             //房间注册用户

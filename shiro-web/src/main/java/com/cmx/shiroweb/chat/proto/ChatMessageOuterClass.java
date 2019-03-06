@@ -62,9 +62,9 @@ public final class ChatMessageOuterClass {
     int getMessageType();
 
     /**
-     * <code>int32 message_timestamp = 6;</code>
+     * <code>int64 message_timestamp = 6;</code>
      */
-    int getMessageTimestamp();
+    long getMessageTimestamp();
 
     /**
      * <code>.com.cmx.shiroweb.chat.proto.ChatMessage.RouterDispatch router_dispatch = 7;</code>
@@ -96,7 +96,7 @@ public final class ChatMessageOuterClass {
       messageContext_ = "";
       filePath_ = "";
       messageType_ = 0;
-      messageTimestamp_ = 0;
+      messageTimestamp_ = 0L;
     }
 
     @Override
@@ -160,7 +160,7 @@ public final class ChatMessageOuterClass {
             }
             case 48: {
 
-              messageTimestamp_ = input.readInt32();
+              messageTimestamp_ = input.readInt64();
               break;
             }
             case 58: {
@@ -1745,11 +1745,11 @@ public final class ChatMessageOuterClass {
     }
 
     public static final int MESSAGE_TIMESTAMP_FIELD_NUMBER = 6;
-    private int messageTimestamp_;
+    private long messageTimestamp_;
     /**
-     * <code>int32 message_timestamp = 6;</code>
+     * <code>int64 message_timestamp = 6;</code>
      */
-    public int getMessageTimestamp() {
+    public long getMessageTimestamp() {
       return messageTimestamp_;
     }
 
@@ -1803,8 +1803,8 @@ public final class ChatMessageOuterClass {
       if (messageType_ != 0) {
         output.writeInt32(5, messageType_);
       }
-      if (messageTimestamp_ != 0) {
-        output.writeInt32(6, messageTimestamp_);
+      if (messageTimestamp_ != 0L) {
+        output.writeInt64(6, messageTimestamp_);
       }
       if (routerDispatch_ != null) {
         output.writeMessage(7, getRouterDispatch());
@@ -1836,9 +1836,9 @@ public final class ChatMessageOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(5, messageType_);
       }
-      if (messageTimestamp_ != 0) {
+      if (messageTimestamp_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(6, messageTimestamp_);
+          .computeInt64Size(6, messageTimestamp_);
       }
       if (routerDispatch_ != null) {
         size += com.google.protobuf.CodedOutputStream
@@ -1904,7 +1904,8 @@ public final class ChatMessageOuterClass {
       hash = (37 * hash) + MESSAGE_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getMessageType();
       hash = (37 * hash) + MESSAGE_TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + getMessageTimestamp();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMessageTimestamp());
       if (hasRouterDispatch()) {
         hash = (37 * hash) + ROUTER_DISPATCH_FIELD_NUMBER;
         hash = (53 * hash) + getRouterDispatch().hashCode();
@@ -2056,7 +2057,7 @@ public final class ChatMessageOuterClass {
 
         messageType_ = 0;
 
-        messageTimestamp_ = 0;
+        messageTimestamp_ = 0L;
 
         if (routerDispatchBuilder_ == null) {
           routerDispatch_ = null;
@@ -2170,7 +2171,7 @@ public final class ChatMessageOuterClass {
         if (other.getMessageType() != 0) {
           setMessageType(other.getMessageType());
         }
-        if (other.getMessageTimestamp() != 0) {
+        if (other.getMessageTimestamp() != 0L) {
           setMessageTimestamp(other.getMessageTimestamp());
         }
         if (other.hasRouterDispatch()) {
@@ -2512,28 +2513,28 @@ public final class ChatMessageOuterClass {
         return this;
       }
 
-      private int messageTimestamp_ ;
+      private long messageTimestamp_ ;
       /**
-       * <code>int32 message_timestamp = 6;</code>
+       * <code>int64 message_timestamp = 6;</code>
        */
-      public int getMessageTimestamp() {
+      public long getMessageTimestamp() {
         return messageTimestamp_;
       }
       /**
-       * <code>int32 message_timestamp = 6;</code>
+       * <code>int64 message_timestamp = 6;</code>
        */
-      public Builder setMessageTimestamp(int value) {
+      public Builder setMessageTimestamp(long value) {
         
         messageTimestamp_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 message_timestamp = 6;</code>
+       * <code>int64 message_timestamp = 6;</code>
        */
       public Builder clearMessageTimestamp() {
         
-        messageTimestamp_ = 0;
+        messageTimestamp_ = 0L;
         onChanged();
         return this;
       }
@@ -2737,7 +2738,7 @@ public final class ChatMessageOuterClass {
       "sage\030\003 \001(\01324.com.cmx.shiroweb.chat.proto" +
       ".ChatMessage.FileMessage\022\021\n\tfile_path\030\004 " +
       "\001(\t\022\024\n\014message_type\030\005 \001(\005\022\031\n\021message_tim" +
-      "estamp\030\006 \001(\005\022P\n\017router_dispatch\030\007 \001(\01327." +
+      "estamp\030\006 \001(\003\022P\n\017router_dispatch\030\007 \001(\01327." +
       "com.cmx.shiroweb.chat.proto.ChatMessage." +
       "RouterDispatch\032I\n\013FileMessage\022\021\n\tfile_na" +
       "me\030\001 \001(\t\022\021\n\tfile_size\030\002 \001(\005\022\024\n\014file_cont" +

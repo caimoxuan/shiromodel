@@ -1,16 +1,18 @@
 package com.cmx.shiroweb.chat.component.member;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelId;
 import lombok.Data;
 
 @Data
-public class NormalUser extends User {
+public class NormalUser extends BaseUser {
 
-    private ChannelId channelId;
+    /**
+     * 接入token
+     */
+    private String token;
 
-    public void bindChannel(ChannelHandlerContext ctx){
-        this.channelId = ctx.channel().id();
-    }
+    /**
+     * 是否接入状态
+     */
+    private boolean isActive;
 
 }

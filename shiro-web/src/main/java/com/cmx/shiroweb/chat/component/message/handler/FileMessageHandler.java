@@ -1,5 +1,6 @@
 package com.cmx.shiroweb.chat.component.message.handler;
 
+import com.cmx.shiroweb.chat.constant.DefaultConstant;
 import com.cmx.shiroweb.chat.enums.MessageType;
 import com.cmx.shiroweb.chat.proto.ChatMessageOuterClass;
 import com.google.protobuf.ByteString;
@@ -18,8 +19,6 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class FileMessageHandler extends ProtoBufMessageHandler {
-
-    private static final String UPLOAD_FILE_PATH = "F:\\upload\\";
 
     @Override
     public void handleMessage(ChatMessageOuterClass.ChatMessage chatMessage) {
@@ -77,11 +76,11 @@ public class FileMessageHandler extends ProtoBufMessageHandler {
         UUID uuid = UUID.randomUUID();
         String suffix;
         if(!fileName.contains(".")){
-            suffix = ".zip";
+            return DefaultConstant.UPLOAD_FILE_PATH + uuid.toString().replace("-", "");
         }
         String[] split = fileName.split("\\.");
         //不考虑文件夹， 文件夹需要压缩
         suffix = "." + split[split.length-1];
-        return UPLOAD_FILE_PATH + uuid.toString().replace("-", "").concat(suffix);
+        return DefaultConstant.UPLOAD_FILE_PATH + uuid.toString().replace("-", "").concat(suffix);
     }
 }
